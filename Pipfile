@@ -4,10 +4,17 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
 
 [packages]
 flask = "*"
 gunicorn = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+psycopg2 = "*"
+sqlalchemy = "*"
+flask-script = "*"
+flask-user = "*"
 
 [requires]
 python_version = "3.6"

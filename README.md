@@ -1,8 +1,14 @@
 # CreswellGrades
 
 ## Install
-`pip install -e .`
+ 
+### Install Postgres  
+Mac/Windows: [Link](https://www.openscg.com/bigsql/postgresql/installers.jsp/)  
+Linux: Install through apt
 
-`export FLASK_APP=creswellgrades`
-`export FLASK_ENV=development`
+### Run Application
+`export DATABASE_URL="postgresql://localhost/grades"`
+`export SECRET_KEY= ___` (replace with actual secret key)
+`export FLASK_APP=app.py`  
+`export FLASK_ENV=development` (development only)  
 `flask run`
