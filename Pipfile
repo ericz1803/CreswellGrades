@@ -15,6 +15,7 @@ psycopg2 = "*"
 sqlalchemy = "*"
 flask-script = "*"
 flask-user = "*"
+flask-bcrypt = "*"
 
 [requires]
 python_version = "3.6"

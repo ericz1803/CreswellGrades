@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 print(os.environ['APP_SETTINGS'])
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 
@@ -19,6 +19,13 @@ def login():
         return "Post request received"
     else:
         return render_template('login.html')
+
+@app.route('/create', methods=['GET', 'POST'])
+def create_account():
+    if request.method == 'POST':
+        return "Post request received"
+    else:
+        return render_template('create_account.html')
 
 if __name__ == '__main__':
     app.run()
