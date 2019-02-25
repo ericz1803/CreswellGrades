@@ -2,12 +2,13 @@
 import unittest
 
 #Include individual tests
-from test_models import TestUsers
+from test_models import TestUsers, TestWholeClass
 
 def suite():
     """ Gather up all tests """
     test_suite = unittest.TestSuite()
     test_suite.addTest(unittest.makeSuite(TestUsers))
+    test_suite.addTest(unittest.makeSuite(TestWholeClass))
     return test_suite
 
 if __name__ == '__main__':

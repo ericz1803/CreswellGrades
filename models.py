@@ -2,6 +2,7 @@ from app import app, db
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import UserMixin, UserManager
 import flask_bcrypt
+import datetime
 
 
 class Role(db.Model):
@@ -62,7 +63,7 @@ class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     assignment_name = db.Column(db.String(127), nullable=False)
     assignment_type = db.Column(db.Integer, nullable=False)
-    assignment_date = db.Column(db.Date())
+    assignment_date = db.Column(db.Date(), default=datetime.date.today())
     class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
     Class = db.relationship('Class')
     total_points = db.Column(db.Float(), nullable=False)
