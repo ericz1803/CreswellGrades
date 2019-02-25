@@ -7,9 +7,9 @@ os.environ['DATABASE_URL'] = 'postgresql://localhost/gradestest'
 import warnings
 import unittest
 from app import app, db
-from models import User, Role, Class, GradeFactor, Assignment, AssignmentResult
+from models import Users, Role, Class, GradeFactor, Assignment, AssignmentResult
 
-class TestUser(unittest.TestCase):
+class TestUsers(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         pass
@@ -24,42 +24,42 @@ class TestUser(unittest.TestCase):
         admin_role = Role(name='admin')
         db.session.add(admin_role)
         db.session.commit()
-        user = User(username='user', first_name='first', last_name='last', role_id=admin_role.id)
+        user = Users(username='user', first_name='first', last_name='last', role_id=admin_role.id)
         user.set_password('password')
         db.session.add(user)
         db.session.commit()
-        self.assertEqual(len(User.query.all()), 1)
+        self.assertEqual(len(Users.query.all()), 1)
 
     def test_set_password(self):
         admin_role = Role(name='admin')
         db.session.add(admin_role)
         db.session.commit()
-        user = User(username='user', first_name='first', last_name='last', role_id=admin_role.id)
+        user = Users(username='user', first_name='first', last_name='last', role_id=admin_role.id)
         user.set_password('password')
         db.session.add(user)
         db.session.commit()
-        pw = User.query.filter_by(username='user').first().password_hash
+        pw = Users.query.filter_by(username='user').first().password_hash
         self.assertNotEqual(pw, 'password')
 
     def test_check_correct_password_returns_true(self):
         admin_role = Role(name='admin')
         db.session.add(admin_role)
         db.session.commit()
-        user = User(username='user', first_name='first', last_name='last', role_id=admin_role.id)
+        user = Users(username='user', first_name='first', last_name='last', role_id=admin_role.id)
         user.set_password('password')
         db.session.add(user)
         db.session.commit()
-        self.assertTrue( User.query.filter_by(username='user').first().check_password('password'))
+        self.assertTrue( Users.query.filter_by(username='user').first().check_password('password'))
 
     def test_check_incorrect_password_returns_false(self):
         admin_role = Role(name='admin')
         db.session.add(admin_role)
         db.session.commit()
-        user = User(username='user', first_name='first', last_name='last', role_id=admin_role.id)
+        user = Users(username='user', first_name='first', last_name='last', role_id=admin_role.id)
         user.set_password('password')
         db.session.add(user)
         db.session.commit()
-        self.assertFalse( User.query.filter_by(username='user').first().check_password('1234'))
+        self.assertFalse( Users.query.filter_by(username='user').first().check_password('1234'))
 
 
 if __name__ == '__main__':
