@@ -13,6 +13,9 @@
         <div class="col-6">
             <h1 class="h1 mb-3 font-weight-normal">Create Account</h1>
             <form method="POST">
+                <span id="usernameTaken" class="badge badge-danger float-left">
+                    Username Taken!
+                </span>
                 <div class="form-group">
                     <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
                 </div>
@@ -26,13 +29,19 @@
                         </div>
                     </div>
                 </div>
+                <span id="weakPassword" class="badge badge-warning float-left">
+                    Short Password! Use 8 or more characters for your password
+                </span>
                 <div class="form-group">
                     <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
                 </div>
+                <span id="passwordsDontMatch" class="badge badge-danger float-left">
+                    Passwords Don't Match!
+                </span>
                 <div class="form-group">
                     <input type="password" id="inputConfirmPassword" class="form-control" placeholder="Confirm Password" required>
                 </div>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Create Account</button>
+                <button id="submitButton" class="btn btn-lg btn-primary btn-block" type="submit">Create Account</button>
             </form>
         </div>
     </div>
@@ -40,6 +49,6 @@
         <h6><a href='/login'>Return to Login</a></h6>
     </div>
 
-    <script src="{{url_for('static', 'create_account.js')}}"></script>
+    <script src="{{ url_for('static', filename='create_account.js') }}"></script>
 
 {% endblock %}

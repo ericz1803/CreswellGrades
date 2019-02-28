@@ -3,5 +3,10 @@
 }
 
 #link {
-    padding-top: 20px;
+  padding-top: 20px;
+}
+
+#usernameTaken, #weakPassword, #passwordsDontMatch {
+  margin-bottom: 5px;
+  display: none;
 }
