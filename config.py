@@ -7,7 +7,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = os.environ.get("SECRET_KEY", default=None)
+    SECRET_KEY = os.environ.get("SECRET_KEY", default=b'_5#y2L"F4Q8z\n\xec]/')
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     if not SECRET_KEY:
         warnings.warn("Secret Key not set.")
