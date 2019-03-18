@@ -28,26 +28,26 @@ class TestUsers(unittest.TestCase):
         db.session.rollback()
 
     def test_normal_insert(self):
-        user = Users(username='user', first_name='first', last_name='last', role_id=self.admin_role.id)
+        user = Users(username='user', first_name='first', last_name='last', role=self.admin_role)
         user.set_password('password')
         db.session.add(user)
         self.assertEqual(len(Users.query.all()), 1)
 
     def test_set_password(self):
-        user = Users(username='user', first_name='first', last_name='last', role_id=self.admin_role.id)
+        user = Users(username='user', first_name='first', last_name='last', role=self.admin_role)
         user.set_password('password')
         db.session.add(user)
         pw = Users.query.filter_by(username='user').first().password_hash
         self.assertNotEqual(pw, 'password')
 
     def test_check_correct_password_returns_true(self):
-        user = Users(username='user', first_name='first', last_name='last', role_id=self.admin_role.id)
+        user = Users(username='user', first_name='first', last_name='last', role=self.admin_role)
         user.set_password('password')
         db.session.add(user)
         self.assertTrue( Users.query.filter_by(username='user').first().check_password('password'))
 
     def test_check_incorrect_password_returns_false(self):
-        user = Users(username='user', first_name='first', last_name='last', role_id=self.admin_role.id)
+        user = Users(username='user', first_name='first', last_name='last', role=self.admin_role)
         user.set_password('password')
         db.session.add(user)
         self.assertFalse( Users.query.filter_by(username='user').first().check_password('1234'))
@@ -75,13 +75,13 @@ class TestWholeClass(unittest.TestCase):
         """test creation of a sample class"""
         #create users of class
         try:
-            teacher = Users(username='creswell', first_name='creswell', last_name='creswell', role_id=self.admin_role)
+            teacher = Users(username='creswell', first_name='creswell', last_name='creswell', role=self.admin_role)
             teacher.set_password('password')
             db.session.add(teacher)
-            student1 = Users(username='notcreswell', first_name='notcreswell', last_name='notcreswell', role_id=self.user_role)
+            student1 = Users(username='notcreswell', first_name='notcreswell', last_name='notcreswell', role=self.user_role)
             student1.set_password('password')
             db.session.add(student1)
-            student2 = Users(username='notcreswell2', first_name='notcreswell2', last_name='notcreswell2', role_id=self.user_role)
+            student2 = Users(username='notcreswell2', first_name='notcreswell2', last_name='notcreswell2', role=self.user_role)
             student2.set_password('password')
             db.session.add(student2)
         except:

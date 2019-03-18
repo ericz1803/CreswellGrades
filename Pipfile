@@ -16,6 +16,8 @@ sqlalchemy = "*"
 flask-script = "*"
 flask-user = "*"
 flask-bcrypt = "*"
+flask-wtf = "*"
+flask-admin = "*"
 
 [requires]
 python_version = "3.6"

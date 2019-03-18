@@ -13,6 +13,7 @@
         <div class="col-6">
             <h1 class="h1 mb-3 font-weight-normal">Create Account</h1>
             <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <span id="usernameTaken" class="badge badge-danger float-left">
                     Username Taken!
                 </span>

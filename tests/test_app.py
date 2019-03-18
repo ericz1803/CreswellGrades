@@ -8,7 +8,7 @@ import warnings
 import unittest
 from app import app, db
 from models import Users, Role
-from flask import request, jsonify
+from flask import request, jsonify, url_for, session
 
 class TestUsernameExistsJson(unittest.TestCase):
     @classmethod
@@ -40,6 +40,28 @@ class TestUsernameExistsJson(unittest.TestCase):
             resp = c.get('/ajax/username-taken/notuser')
             json_data = resp.get_json()
             self.assertFalse(json_data["taken"]) 
+
+class TestHome(unittest.TestCase):
+    def testNoUserId(self):
+        with app.test_client() as c:
+            resp = c.get('/user/1')
+            self.assertEqual(resp.status_code, 302)
+            self.assertTrue('http://localhost/login?next' in resp.headers['location'])
+    
+    def testWrongUserId(self):
+        with app.test_client() as c:
+            with c.session_transaction() as session:
+                session['user_id'] = 1
+                resp = c.get('/user/2')
+                self.assertEqual(resp.status_code, 403)
+    
+    def testCorrectUserId(self):
+        with app.test_client() as c:
+            with c.session_transaction() as session:
+                session['user_id'] = 1
+                resp = c.get('/user/1')
+                self.assertEqual(resp.status_code, 200)
+                self.assertEqual(resp.location, 'http://localhost/user/1')
 
 if __name__ == '__main__':
     warnings.warn("Only running app tests.")
