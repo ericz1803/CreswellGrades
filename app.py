@@ -19,8 +19,11 @@ csrf.init_app(app)
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
         #true if role_id is admin
-        allowed = (models.Users.query.filter_by(id=session['user_id']).first().role_id == 1)
-        return (allowed)
+        try:
+            allowed = (models.Users.query.filter_by(id=session['user_id']).first().role_id == 1)
+            return (allowed)
+        except:
+            return False
     
     def _handle_view(self, name, **kwargs):
         if not self.is_accessible():
@@ -32,8 +35,11 @@ class MyAdminIndexView(AdminIndexView):
 class MyModelView(ModelView):
     def is_accessible(self):
         #true if role_id is admin
-        allowed = (models.Users.query.filter_by(id=session['user_id']).first().role_id == 1)
-        return (allowed)
+        try:
+            allowed = (models.Users.query.filter_by(id=session['user_id']).first().role_id == 1)
+            return (allowed)
+        except:
+            return False
     
     def _handle_view(self, name, **kwargs):
         if not self.is_accessible():
@@ -116,7 +122,10 @@ def home(id):
         return abort(403)
     else:
         #return user interface if not admin else admin interface
-        if models.Users.query.filter_by(id=session['user_id']).first().role_id == 1:
+        user = models.Users.query.filter_by(id=session['user_id']).first()
+        if not user:
+            abort(404)
+        elif user.role_id == 1:
             return redirect('admin')
         else:
             return "Normal User"
