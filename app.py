@@ -1,10 +1,12 @@
 from flask import Flask, abort, render_template, url_for, redirect, request, jsonify, send_from_directory, session
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.form import rules
 from flask_sqlalchemy import SQLAlchemy
 import os
 from functools import wraps
 from flask_wtf.csrf import CSRFProtect, CSRFError
+from wtforms import PasswordField
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
@@ -48,9 +50,35 @@ class MyModelView(ModelView):
             else:
                 return redirect(url_for('login', next=request.url))
 
+class UserView(ModelView):
+    column_exclude_list = ('password_hash',)
+    form_excluded_columns = ('password_hash',)
+    form_extra_fields = {
+        'password': PasswordField('password')
+    }
+
+    def is_accessible(self):
+        #true if role_id is admin
+        try:
+            allowed = (models.Users.query.filter_by(id=session['user_id']).first().role_id == 1)
+            return (allowed)
+        except:
+            return False
+    
+    def _handle_view(self, name, **kwargs):
+        if not self.is_accessible():
+            if 'user_id' in session.keys():
+                abort(403)
+            else:
+                return redirect(url_for('login', next=request.url))
+
+    def on_model_change(self, form, user, is_created):
+        if form.password.data is not None:
+            user.set_password(form.password.data)
+
 
 admin = Admin(app, name="admin", template_mode='bootstrap3', index_view=MyAdminIndexView())
-admin.add_view(MyModelView(models.Users, db.session))
+admin.add_view(UserView(models.Users, db.session))
 admin.add_view(MyModelView(models.Role, db.session))
 admin.add_view(MyModelView(models.Class, db.session))
 admin.add_view(MyModelView(models.GradeFactor, db.session))
@@ -99,7 +127,7 @@ def create_account():
         last_name = request.form['lastname']
         password = request.form['password']
         password_confirm = request.form['passwordconfirm']
-        #check if username already exists or passsword does not match password confirm
+        #check if username already exists or password does not match password confirm
         if (models.Users.query.filter_by(username=username).count()>0 or password != password_confirm):
             return render_template('create_account.html')
         else:
