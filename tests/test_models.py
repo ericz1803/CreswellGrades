@@ -9,7 +9,7 @@ import unittest
 import traceback
 import datetime
 from app import app, db
-from models import Users, Role, Class, GradeFactor, Assignment, AssignmentResult, ClassStudentLink
+from models import Users, Role, Class, GradeFactor, Assignment, AssignmentResult, ClassStudentLink, GradeScale
 
 class TestUsers(unittest.TestCase):
     @classmethod
@@ -98,17 +98,25 @@ class TestWholeClass(unittest.TestCase):
 
         #create gradefactor
         try:
-            grade_factor = GradeFactor(class_id=class_, category1_name="tests", category1_weight=0.5, category2_name="quizzes", category2_weight=0.5)
+            grade_factor = GradeFactor(class_id=class_.id, category1_name="tests", category1_weight=0.5, category2_name="quizzes", category2_weight=0.5)
             db.session.add(grade_factor)
+        except:
+            self.fail("Failed to create grade factor.")
+            traceback.print_exc()
+        
+        #create gradescale
+        try:
+            grade_scale = GradeScale(class_id=class_.id, a_b = 0.9, b_c = 0.8, c_d = 0.7, d_f = 0.6)
+            db.session.add(grade_scale)
         except:
             self.fail("Failed to create grade factor.")
             traceback.print_exc()
 
         #add students to class
         try:
-            class_student_link1 = ClassStudentLink(student_id=student1, class_id=class_)
+            class_student_link1 = ClassStudentLink(student_id=student1.id, class_id=class_.id)
             db.session.add(class_student_link1)
-            class_student_link2 = ClassStudentLink(student_id=student2, class_id=class_)
+            class_student_link2 = ClassStudentLink(student_id=student2.id, class_id=class_.id)
             db.session.add(class_student_link2)
         except:
             self.fail("Failed to create class student links.")

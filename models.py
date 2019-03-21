@@ -58,6 +58,16 @@ class GradeFactor(db.Model):
     category8_name = db.Column(db.String(63))
     category8_weight = db.Column(db.Float())
 
+class GradeScale(db.Model):
+    __tablename__ = 'gradescale'
+    id = db.Column(db.Integer, primary_key=True)
+    class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
+
+    a_b = db.Column(db.Float(), nullable=False)
+    b_c = db.Column(db.Float(), nullable=False)
+    c_d = db.Column(db.Float(), nullable=False)
+    d_f = db.Column(db.Float(), nullable=False)
+
 class Assignment(db.Model):
     __tablename__ = 'assignment'
     id = db.Column(db.Integer, primary_key=True)
