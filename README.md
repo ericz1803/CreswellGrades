@@ -24,5 +24,5 @@ Linux: Install through apt
 `flask run`
 
 ### Deploy
-`heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`
+`heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`  
 `git push pro master`
