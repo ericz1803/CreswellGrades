@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
 {% endblock %}
 
@@ -9,40 +10,36 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row justify-content-center text-center" id="box">
-        <div class="col-6">
+    <div class="row justify-content-center text-center" id="box" novalidate>
+        <div class="col-12 col-md-6">
             <h1 class="h1 mb-3 font-weight-normal">Create Account</h1>
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <span id="usernameTaken" class="badge badge-danger float-left">
-                    Username Taken!
-                </span>
                 <div class="form-group">
                     <input type="text" name="username" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+                    <div class="invalid-feedback">Please choose a different username.</div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col">
-                            <input type="text" name="firstname" id="inputFirstname" class="form-control" placeholder="First Name" required>
+                            <input type="text" name="firstname" id="inputFirstname" class="form-control is-invalid" placeholder="First Name" required>
+                            <div class="invalid-feedback">Field cannot be empty.</div>
                         </div>
                         <div class="col">
-                            <input type="text" name="lastname" id="inputLastname" class="form-control" placeholder="Last Name" required>
+                            <input type="text" name="lastname" id="inputLastname" class="form-control is-invalid" placeholder="Last Name" required>
+                            <div class="invalid-feedback">Field cannot be empty.</div>
                         </div>
                     </div>
                 </div>
-                <span id="weakPassword" class="badge badge-warning float-left">
-                    Short Password! Use 8 or more characters for your password
-                </span>
                 <div class="form-group">
-                    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                    <input type="password" name="password" id="inputPassword" class="form-control is-invalid" placeholder="Password" required>
+                    <div class="invalid-feedback">Passwords must be at least 8 characters long.</div>
                 </div>
-                <span id="passwordsDontMatch" class="badge badge-danger float-left">
-                    Passwords Don't Match!
-                </span>
                 <div class="form-group">
-                    <input type="password" name="passwordconfirm" id="inputConfirmPassword" class="form-control" placeholder="Confirm Password" required>
+                    <input type="password" name="passwordconfirm" id="inputConfirmPassword" class="form-control is-invalid" placeholder="Confirm Password" required>
+                    <div class="invalid-feedback">Passwords do not match.</div>
                 </div>
-                <button id="submitButton" class="btn btn-lg btn-primary btn-block" type="submit">Create Account</button>
+                <button id="submitButton" class="btn btn-lg btn-primary btn-block" type="submit" disabled>Create Account</button>
             </form>
         </div>
     </div>

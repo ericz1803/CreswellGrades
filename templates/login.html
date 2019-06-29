@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
 {% endblock %}
 
@@ -10,8 +11,15 @@
 
 {% block body %}
     <div class="row justify-content-center text-center" id="box">
-        <div class="col-6">
+        <div class="col-12 col-md-6">
             <h1 class="h1 mb-3 font-weight-normal">Login</h1>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">
@@ -26,8 +34,12 @@
         </div>
     </div>
     <div class="row justify-content-center" id="link">
-        <h6><a href='/create'>Create account</a></h6>
+        <h6><a href='/create'>Create student account</a></h6>
     </div>
+    <div class="row justify-content-center" id="link">
+        <h6><a href='/create-teacher'>Create teacher account</a></h6>
+    </div>
+
 
   
 {% endblock %}

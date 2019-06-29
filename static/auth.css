@@ -1,11 +1,3 @@
-#box {
-  padding-top: 120px;
-}
-
-#link {
-  padding-top: 20px;
-}
-
 #usernameTaken, #weakPassword, #passwordsDontMatch {
   margin-bottom: 5px;
   display: none;

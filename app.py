@@ -1,7 +1,8 @@
-from flask import Flask, abort, render_template, url_for, redirect, request, jsonify, send_from_directory, session
+from flask import Flask, abort, flash, render_template, url_for, redirect, request, jsonify, send_from_directory, session
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import rules
+from flask_admin.menu import MenuLink
 from flask_sqlalchemy import SQLAlchemy
 import os
 from functools import wraps
@@ -82,10 +83,11 @@ admin.add_view(UserView(models.Users, db.session))
 admin.add_view(MyModelView(models.Role, db.session))
 admin.add_view(MyModelView(models.Class, db.session))
 admin.add_view(MyModelView(models.GradeFactor, db.session))
+admin.add_view(MyModelView(models.GradeScale, db.session))
 admin.add_view(MyModelView(models.Assignment, db.session))
 admin.add_view(MyModelView(models.AssignmentResult, db.session))
 admin.add_view(MyModelView(models.ClassStudentLink, db.session))
-
+admin.add_link(MenuLink(name='Logout', category='', url='/logout'))
 
 
 @app.route('/')
@@ -94,7 +96,6 @@ def index():
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    #session.clear() #remove line later
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -103,6 +104,7 @@ def login():
             user = user.first()
         else:
             print("Username " + username + " does not exist.")
+            flash('Incorrect username or password.')
             return redirect('login')
         
         if user.check_password(password):
@@ -110,6 +112,7 @@ def login():
             return redirect('user/' + str(user.id))
         else:
             print("Incorrect password.")
+            flash('Incorrect username or password.')
             return redirect('login')
     else:
         #do not let them login if user_id already exists
@@ -118,10 +121,14 @@ def login():
         else:
             return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
+
 @app.route('/create', methods=['GET', 'POST'])
 def create_account():
     if request.method == 'POST':
-        #bad but gotta avoid circular importss
         username = request.form['username']
         first_name = request.form['firstname']
         last_name = request.form['lastname']
@@ -141,6 +148,28 @@ def create_account():
     else:
         return render_template('create_account.html')
 
+@app.route('/create-teacher', methods=['GET', 'POST'])
+def create_teacher_account():
+    if request.method == 'POST':
+        username = request.form['username']
+        first_name = request.form['firstname']
+        last_name = request.form['lastname']
+        password = request.form['password']
+        password_confirm = request.form['passwordconfirm']
+        #check if username already exists or password does not match password confirm
+        if (models.Users.query.filter_by(username=username).count()>0 or password != password_confirm):
+            return render_template('create_account.html')
+        else:
+            role = models.Role.query.filter_by(name='teacher').first()
+            user = models.Users(username=username, first_name=first_name, last_name=last_name, role_id = role.id)
+            user.set_password(password)
+            db.session.add(user)
+            db.session.commit()
+            db.session.close()
+            return redirect('login')
+    else:
+        return render_template('create_account.html')
+
 @app.route('/user/<int:id>')
 def home(id):
     if 'user_id' not in session:
@@ -150,14 +179,73 @@ def home(id):
         return abort(403)
     else:
         #return user interface if not admin else admin interface
-        user = models.Users.query.filter_by(id=session['user_id']).first()
-        if not user:
-            abort(404)
-        elif user.role_id == 1:
+        user = models.Users.query.filter_by(id=session['user_id']).first_or_404()
+        if user.role_id == 1:
             return redirect('admin')
+        elif user.role_id == 3:
+            #teacher
+            context = {}
+            return render_template('teacher_home.html', context=context)
         else:
-            return "Normal User"
+            #student
+            classes = models.ClassStudentLink.query.filter_by(student_id=session['user_id'])
+            context = {classes:zip(classes, [class_.id for class_ in classes])}
+            return render_template('student_home.html', context=context)
  
+@app.route('/join', methods=['GET', 'POST'])
+def join():
+    #check user is logged in first
+    if 'user_id' not in session:
+        return redirect(url_for('login', next=request.url))
+    else:
+        if request.method == 'POST':
+            join_code = request.form['join_code']
+            class_ = models.Class.query.filter_by(join_code=join_code).first()
+            if not class_:
+                return "Class not found"
+            else:
+                new_class_student_link = models.ClassStudentLink(student_id=session['user_id'], class_id=class_.id)
+                db.session.add(new_class_student_link)
+                db.session.commit()
+                db.session.close()
+                return redirect('/')
+        else:
+            return render_template('join.html')
+
+@app.route('/create-class', methods=['GET', 'POST'])
+def create_class():
+    if 'user_id' not in session:
+        return redirect(url_for('login', next=request.url))
+    else:
+        user = models.Users.query.filter_by(id=session['user_id']).first_or_404()
+        #check that user is teacher
+        if user.role_id != 3:
+            return abort(403)
+        else:
+            if request.method == 'POST':
+                class_name = request.form['class_name']
+                join_code = request.form['join_code']
+                user_id = session['user_id']
+                print(class_name, join_code, user_id)
+                new_class = models.Class(teacher_id=user_id, name=class_name, join_code=join_code)
+                db.session.add(new_class)
+                db.session.commit()
+                db.session.close()
+                return redirect('/')
+            else:
+                return render_template('create_class.html')
+
+@app.route('/classes/<int:id>')
+def classes(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login', next=request.url))
+    else:
+        #check that user is in that class
+        student_in_class = models.ClassStudentLink.query.filter_by(student_id=session['user_id'], class_id=id).first_or_404()
+        return "grades"
+            
+
+
 @app.errorhandler(403)
 def access_denied(e):
     context = {'error_num': 403,

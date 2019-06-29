@@ -1,33 +1,60 @@
-$("#inputUsername").change(function(){
-    var uname = $(this).val();
+document.getElementById("inputUsername").addEventListener('change', function(){
+    var uname = this.value;
+    console.log(this.classList);
     $.ajax({
         url: '/ajax/username-taken/'.concat(uname),
         type: "GET",
         success: function(response){
             if (response['taken']) {
-                document.getElementById("usernameTaken").style.display = 'block';
+                document.getElementById("inputUsername").classList.add('is-invalid');
             } else {
-                document.getElementById("usernameTaken").style.display = 'none';
+                document.getElementById("inputUsername").classList.remove('is-invalid');
             }
         }
     });
 });
 
-$("#inputPassword").change(function(){
-    var pw = $(this).val();
+document.getElementById("inputPassword").addEventListener('change', function(){
+    var pw = this.value;
     if (pw.length < 8) {
-        document.getElementById("weakPassword").style.display = 'block';
+        this.classList.add('is-invalid');
     } else {
-        document.getElementById("weakPassword").style.display = 'none';
+        this.classList.remove('is-invalid');
     }
 });
 
-$("#inputConfirmPassword").change(function(){
-    var pw = document.getElementById("inputPassword").value
-    var pw_confirm = $(this).val();
-    if (pw != pw_confirm) {
-        document.getElementById("passwordsDontMatch").style.display = 'block';
+document.getElementById("inputFirstname").addEventListener('change', function(){
+    var val = this.value;
+    if (val.length > 0) {
+        this.classList.remove('is-invalid');
     } else {
-        document.getElementById("passwordsDontMatch").style.display = 'none';
+        this.classList.add('is-invalid');
+    }
+});
+
+document.getElementById("inputLastname").addEventListener('change', function(){
+    var val = this.value;
+    if (val.length > 0) {
+        this.classList.remove('is-invalid');
+    } else {
+        this.classList.add('is-invalid');
+    }
+});
+
+document.getElementById("inputConfirmPassword").addEventListener('change', function(){
+    var pw = document.getElementById("inputPassword").value
+    var pw_confirm = this.value;
+    if (pw != pw_confirm) {
+        this.classList.add('is-invalid');
+    } else {
+        this.classList.remove('is-invalid');
+    }
+});
+
+$('form').on('keyup change paste', 'input, select, textarea', function(){
+    if (document.getElementsByClassName('is-invalid').length === 0) {
+        document.getElementById("submitButton").disabled = false;
+    } else {
+        document.getElementById("submitButton").disabled = true;
     }
 });

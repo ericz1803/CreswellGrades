@@ -33,14 +33,13 @@ class Class(db.Model):
     teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     teacher = db.relationship('Users', backref='classes')
 
+    name = db.Column(db.String(127), nullable=False, unique=True)
     join_code = db.Column(db.String(127), nullable=False, unique=True)
-    grade_factor = db.relationship('GradeFactor', uselist=False)
 
 class GradeFactor(db.Model):
     __tablename__ = 'gradefactor'
     id = db.Column(db.Integer, primary_key=True)
-    class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
-
+    
     category1_name = db.Column(db.String(63), nullable=False)
     category1_weight = db.Column(db.Float(), nullable=False)
     category2_name = db.Column(db.String(63))
@@ -58,15 +57,19 @@ class GradeFactor(db.Model):
     category8_name = db.Column(db.String(63))
     category8_weight = db.Column(db.Float())
 
+    class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
+    class_ = db.relationship('Class', uselist=False)
+
 class GradeScale(db.Model):
     __tablename__ = 'gradescale'
     id = db.Column(db.Integer, primary_key=True)
-    class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
 
     a_b = db.Column(db.Float(), nullable=False)
     b_c = db.Column(db.Float(), nullable=False)
     c_d = db.Column(db.Float(), nullable=False)
     d_f = db.Column(db.Float(), nullable=False)
+    class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
+    class_ = db.relationship('Class', uselist=False)
 
 class Assignment(db.Model):
     __tablename__ = 'assignment'
@@ -74,9 +77,9 @@ class Assignment(db.Model):
     assignment_name = db.Column(db.String(127), nullable=False)
     assignment_type = db.Column(db.Integer, nullable=False)
     assignment_date = db.Column(db.Date(), default=datetime.date.today())
+    total_points = db.Column(db.Float(), nullable=False)
     class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
     Class = db.relationship('Class')
-    total_points = db.Column(db.Float(), nullable=False)
 
 class AssignmentResult(db.Model):
     __tablename__ = 'assignmentresult'

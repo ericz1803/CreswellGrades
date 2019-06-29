@@ -90,7 +90,7 @@ class TestWholeClass(unittest.TestCase):
         
         #create class
         try:
-            class_ = Class(teacher_id=teacher, join_code="join")
+            class_ = Class(teacher_id=teacher, name="class", join_code="join")
             db.session.add(class_)
         except:
             self.fail("Failed to create class.")

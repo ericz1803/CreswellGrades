@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+{% endblock %}
+
+{% block title %}
+    Join Class
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center text-center" id="box">
+        <div class="col-12 col-md-6">
+            <h1 class="h1 mb-3 font-weight-normal">Join Code</h1>
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="form-group">
+                    <input type="text" name="join_code" class="form-control" id="join">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row justify-content-center" id="link">
+        <a href='/logout'><h5>Logout</h5></a>
+    </div>
+{% endblock %}
+
