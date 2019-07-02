@@ -109,7 +109,7 @@ def login():
         
         if user.check_password(password):
             session['user_id'] = user.id
-            return redirect('/')
+            return redirect('user/' + str(session['user_id']))
         else:
             print("Incorrect password.")
             flash('Incorrect username or password.')
@@ -181,7 +181,7 @@ def home(id):
         #return user interface if not admin else admin interface
         user = models.Users.query.filter_by(id=session['user_id']).first_or_404()
         if user.role_id == 1:
-            return redirect('admin')
+            return redirect('/admin')
         elif user.role_id == 3:
             #teacher
             classes = models.Class.query.filter_by(teacher_id=session['user_id'])
