@@ -109,7 +109,7 @@ def login():
         
         if user.check_password(password):
             session['user_id'] = user.id
-            return redirect('user/' + str(user.id))
+            return redirect('/')
         else:
             print("Incorrect password.")
             flash('Incorrect username or password.')
