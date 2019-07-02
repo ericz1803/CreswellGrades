@@ -61,6 +61,8 @@ class TestHome(unittest.TestCase):
         db.session.add(admin_role)
         user_role = Role(name='user')
         db.session.add(user_role)
+        teacher_role = Role(name='teacher')
+        db.session.add(teacher_role)
         user = Users(username='user', first_name='first', last_name='last', role_id=user_role.id)
         user.set_password('password')
         db.session.add(user)
@@ -149,6 +151,15 @@ class TestAdminInterfacePrivileges(unittest.TestCase):
                 session['user_id'] = 2
             resp = c.get('/admin/users')
             self.assertTrue(resp.status_code, 403)
+
+    def testIsNotAdminSubpage2(self):
+        with app.test_client() as c:
+            with c.session_transaction() as session:
+                #normal user
+                session['user_id'] = 2
+            resp = c.get('/admin/class')
+            self.assertTrue(resp.status_code, 403)
+
 
 
 if __name__ == '__main__':

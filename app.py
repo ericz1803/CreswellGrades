@@ -184,8 +184,8 @@ def home(id):
             return redirect('admin')
         elif user.role_id == 3:
             #teacher
-            context = {}
-            return render_template('teacher_home.html', context=context)
+            classes = models.Class.query.filter_by(teacher_id=session['user_id'])
+            return render_template('teacher_home.html', classes=classes)
         else:
             #student
             classes = models.ClassStudentLink.query.filter_by(student_id=session['user_id'])
@@ -226,14 +226,71 @@ def create_class():
                 class_name = request.form['class_name']
                 join_code = request.form['join_code']
                 user_id = session['user_id']
-                print(class_name, join_code, user_id)
+                a = request.form['a']
+                b = request.form['b']
+                c = request.form['c']
+                d = request.form['d']
+
+                cat1name = request.form['category_name1']
+                cat1val = request.form['category_value1']
+                cat2name = request.form.get('category_name2')
+                cat2val = request.form.get('category_value2')
+                cat3name = request.form.get('category_name3')
+                cat3val = request.form.get('category_value3')
+                cat4name = request.form.get('category_name4')
+                cat4val = request.form.get('category_value4')
+                cat5name = request.form.get('category_name5')
+                cat5val = request.form.get('category_value5')
+                cat6name = request.form.get('category_name6')
+                cat6val = request.form.get('category_value6')
+                cat7name = request.form.get('category_name7')
+                cat7val = request.form.get('category_value7')
+                cat8name = request.form.get('category_name8')
+                cat8val = request.form.get('category_value8')
+
                 new_class = models.Class(teacher_id=user_id, name=class_name, join_code=join_code)
+                new_grade_factor = models.GradeFactor(
+                    category1_name = cat1name,
+                    category1_weight = cat1val,
+                    category2_name = cat2name,
+                    category2_weight = cat2val,
+                    category3_name = cat3name,
+                    category3_weight = cat3val,
+                    category4_name = cat4name,
+                    category4_weight = cat4val,
+                    category5_name = cat5name,
+                    category5_weight = cat5val,
+                    category6_name = cat6name,
+                    category6_weight = cat6val,
+                    category7_name = cat7name,
+                    category7_weight = cat7val,
+                    category8_name = cat8name,
+                    category8_weight = cat8val,
+                    class_id=new_class.id,
+                    class_=new_class
+                )
+                new_grade_scale = models.GradeScale(a_b=a, b_c=b, c_d=c, d_f=d, class_id=new_class.id, class_=new_class)
                 db.session.add(new_class)
+                db.session.add(new_grade_factor)
+                db.session.add(new_grade_scale)
                 db.session.commit()
                 db.session.close()
                 return redirect('/')
             else:
                 return render_template('create_class.html')
+
+@app.route('/class/<int:id>')
+def teacher_class(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login', next=request.url))
+    else:
+        user = models.Users.query.filter_by(id=session['user_id']).first_or_404()
+        #check that user is teacher
+        if user.role_id != 3:
+            return abort(403)
+        else:
+            class_obj = models.Class.query.filter_by(id=id).first_or_404()
+            return render_template('teacher_class.html', class_obj=class_obj)
 
 @app.route('/classes/<int:id>')
 def classes(id):
@@ -243,8 +300,6 @@ def classes(id):
         #check that user is in that class
         student_in_class = models.ClassStudentLink.query.filter_by(student_id=session['user_id'], class_id=id).first_or_404()
         return "grades"
-            
-
 
 @app.errorhandler(403)
 def access_denied(e):
