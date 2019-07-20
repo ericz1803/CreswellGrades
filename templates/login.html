@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
 {% endblock %}
 
@@ -13,7 +12,7 @@
     <nav class="navbar navbar-light bg-light">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <h5>Creswell Grades</h5>
+                <a style="text-decoration:none;" href="/"><h4>Creswell Grades</h4></a>
             </li>
         </ul>
         <ul class="navbar-nav">

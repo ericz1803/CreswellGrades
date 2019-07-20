@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from 'templates.jinja' import basicnav %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='student_grades.css') }}">
+{% endblock %}
+
+{% block title %}
+    Student Grades
+{% endblock %}
+
+{% block body %}
+    {{ basicnav | safe }}
+    <div class="grades">
+        {% for category in grades %}
+            <div class="row">
+                <div class="col-8"><h1>{{ category.name }}</h1></div>
+                <div class="col-4 text-right"><h1>{{ grade_pct }}</h1></div>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Points</th>
+                    <th>Max Points</th>
+                    <th>Percentage</th>
+                </tr>
+                {% for assignment in category.assignments %}
+                    <tr>
+                        <td>Assignment Name</td>
+                        <td>1/1/2019</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>66.7</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+        <div class="row">
+            <div class="col-8"><h1>Final Grades</h1></div>
+            <div class="col-4 text-right"><h1>{{ grade_pct }}</h1></div>
+        </div>
+    </div>
+{% endblock %}

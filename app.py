@@ -187,10 +187,13 @@ def home(id):
             classes = models.Class.query.filter_by(teacher_id=session['user_id'])
             return render_template('teacher_home.html', classes=classes)
         else:
-            #student
-            classes = models.ClassStudentLink.query.filter_by(student_id=session['user_id'])
-            context = {classes:zip(classes, [class_.id for class_ in classes])}
-            return render_template('student_home.html', context=context)
+            #classes that student is enrolled in
+            classes, _, _ = zip(*(db.session.query(models.Class, models.Users, models.ClassStudentLink)
+            .join(models.ClassStudentLink, models.Class.id == models.ClassStudentLink.class_id)
+            .join(models.Users, models.Users.id == models.ClassStudentLink.student_id)
+            .filter(models.Users.id==session['user_id']).all()))
+
+            return render_template('student_home.html', classes=classes)
  
 @app.route('/join', methods=['GET', 'POST'])
 def join():
@@ -284,13 +287,33 @@ def teacher_class(id):
     if 'user_id' not in session:
         return redirect(url_for('login', next=request.url))
     else:
+        return redirect('/class/grades/' + str(id))
+
+@app.route('/class/about/<int:id>')
+def teacher_class_about(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login', next=request.url))
+    else:
         user = models.Users.query.filter_by(id=session['user_id']).first_or_404()
         #check that user is teacher
         if user.role_id != 3:
             return abort(403)
         else:
             class_obj = models.Class.query.filter_by(id=id).first_or_404()
-            return render_template('teacher_class.html', class_obj=class_obj)
+            return render_template('teacher_class_about.html', class_obj=class_obj)
+
+@app.route('/class/grades/<int:id>')
+def teacher_class_grades(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login', next=request.url))
+    else:
+        user = models.Users.query.filter_by(id=session['user_id']).first_or_404()
+        #check that user is teacher
+        if user.role_id != 3:
+            return abort(403)
+        else:
+            class_obj = models.Class.query.filter_by(id=id).first_or_404()
+            return render_template('teacher_class_grades.html', class_obj=class_obj)
 
 @app.route('/classes/<int:id>')
 def classes(id):
@@ -299,7 +322,10 @@ def classes(id):
     else:
         #check that user is in that class
         student_in_class = models.ClassStudentLink.query.filter_by(student_id=session['user_id'], class_id=id).first_or_404()
-        return "grades"
+        grades = [{'name':'Homework','assignments':['a','b']},
+                  {'name':'Homework','assignments':['a','b']}
+                 ]           
+        return render_template('student_grades.html', grades=grades, grade_pct=90)
 
 @app.errorhandler(403)
 def access_denied(e):

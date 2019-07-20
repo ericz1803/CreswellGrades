@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-    {{class_obj.name}}
+    {{class_obj.name}} Grades
 {% endblock %}
 
 
@@ -10,13 +10,13 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
                 <li class="navbar-brand">
-                    <h4>Creswell Grades</h4>
+                    <a style="text-decoration:none;" href="/"><h4>Creswell Grades</h4></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"><h5>About</h5></a>
+                    <a class="nav-link" href="/class/about/{{ class_obj.id }}"><h5>About</h5></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link"><h5>Grades</h5></a>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/class/grades/{{ class_obj.id }}"><h5>Grades</h5></a>
                 </li>
             </ul>
 

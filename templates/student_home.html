@@ -2,7 +2,6 @@
 {% from 'templates.jinja' import basicnav %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 {% endblock %}
 
@@ -21,7 +20,7 @@
 
                 <ul class="list-group list-group-flush">
                     {% for class in classes %}
-                        <a href="/class/{{class.id}}"><li class="list-group-item"><h5>{{class.name}}</h5></li></a>
+                        <a href="/classes/{{class.id}}"><li class="list-group-item"><h5>{{class.name}}</h5></li></a>
                     {% endfor %}
                     <a href='/join'><li class="list-group-item"><h5 class="card-title"><i class="fas fa-plus-circle"></i> Join Class</h5></li></a>
                 </ul>
