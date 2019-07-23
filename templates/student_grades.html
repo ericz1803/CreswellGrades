@@ -13,11 +13,8 @@
     {{ basicnav | safe }}
     <div class="grades">
         {% for category in grades %}
-            <div class="row">
-                <div class="col-8"><h1>{{ category.name }}</h1></div>
-                <div class="col-4 text-right"><h1>{{ grade_pct }}</h1></div>
-            </div>
-            <table class="table">
+            <h2>{{ category.name }}</h2>
+            <table class="table table-striped">
                 <tr>
                     <th>Name</th>
                     <th>Date</th>
@@ -25,6 +22,8 @@
                     <th>Max Points</th>
                     <th>Percentage</th>
                 </tr>
+                {% set points_counter = 0 %}
+                {% set max_points_counter = 0 %}
                 {% for assignment in category.assignments %}
                     <tr>
                         <td>Assignment Name</td>
@@ -34,11 +33,18 @@
                         <td>66.7</td>
                     </tr>
                 {% endfor %}
+                <tr>
+                    <td class="font-weight-bold">{{category.name}} Total</td>
+                    <td></td>
+                    <td class="font-weight-bold">4</td>
+                    <td class="font-weight-bold">6</td>
+                    <td class="font-weight-bold">66.7</td>
+                </tr>
             </table>
         {% endfor %}
         <div class="row">
-            <div class="col-8"><h1>Final Grades</h1></div>
-            <div class="col-4 text-right"><h1>{{ grade_pct }}</h1></div>
+            <div class="col-8"><h1>Final Grade</h1></div>
+            <div class="col-4 text-right"><h1>{{ grade_letter }}  {{ grade_pct }}</h1></div>
         </div>
     </div>
 {% endblock %}

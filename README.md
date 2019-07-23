@@ -23,6 +23,13 @@ Linux: Install through apt
 `export FLASK_APP=app.py`  
 `flask run`
 
+### Edit Models
+1. Make edits in models.py.
+2. (first time) `python manage.py db init`
+3. (first time) `python set_up_db.py`
+4. `python manage.py db migrate`
+5. `python manage.py db upgrade`
+
 ### Deploy
 `heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`  
 `git push pro master`

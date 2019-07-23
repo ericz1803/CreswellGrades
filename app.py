@@ -36,6 +36,8 @@ class MyAdminIndexView(AdminIndexView):
                 return redirect(url_for('login', next=request.url))
 
 class MyModelView(ModelView):
+    column_display_pk = True
+
     def is_accessible(self):
         #true if role_id is admin
         try:
@@ -52,6 +54,7 @@ class MyModelView(ModelView):
                 return redirect(url_for('login', next=request.url))
 
 class UserView(ModelView):
+    column_display_pk = True
     column_exclude_list = ('password_hash',)
     form_excluded_columns = ('password_hash',)
     form_extra_fields = {
@@ -188,12 +191,14 @@ def home(id):
             return render_template('teacher_home.html', classes=classes)
         else:
             #classes that student is enrolled in
-            classes, _, _ = zip(*(db.session.query(models.Class, models.Users, models.ClassStudentLink)
-            .join(models.ClassStudentLink, models.Class.id == models.ClassStudentLink.class_id)
-            .join(models.Users, models.Users.id == models.ClassStudentLink.student_id)
-            .filter(models.Users.id==session['user_id']).all()))
-
-            return render_template('student_home.html', classes=classes)
+            try:
+                classes, _, _ = zip(*(db.session.query(models.Class, models.Users, models.ClassStudentLink)
+                .join(models.ClassStudentLink, models.Class.id == models.ClassStudentLink.class_id)
+                .join(models.Users, models.Users.id == models.ClassStudentLink.student_id)
+                .filter(models.Users.id==session['user_id']).all()))
+                return render_template('student_home.html', classes=classes)
+            except:
+                return render_template('student_home.html')
  
 @app.route('/join', methods=['GET', 'POST'])
 def join():
@@ -289,7 +294,7 @@ def teacher_class(id):
     else:
         return redirect('/class/grades/' + str(id))
 
-@app.route('/class/about/<int:id>')
+@app.route('/class/about/<int:id>', methods=['GET', 'POST'])
 def teacher_class_about(id):
     if 'user_id' not in session:
         return redirect(url_for('login', next=request.url))
@@ -299,8 +304,45 @@ def teacher_class_about(id):
         if user.role_id != 3:
             return abort(403)
         else:
-            class_obj = models.Class.query.filter_by(id=id).first_or_404()
-            return render_template('teacher_class_about.html', class_obj=class_obj)
+            if request.method == 'POST':
+                #update class obj
+                class_obj = models.Class.query.filter_by(id=id).first_or_404()
+                class_obj.name = request.form['class_name']
+                class_obj.join_code = request.form['join_code']
+                
+                #update grade scale
+                grade_scale = models.GradeScale.query.filter_by(class_id=id).first_or_404()
+                grade_scale.a_b = request.form['a']
+                grade_scale.b_c = request.form['b']
+                grade_scale.c_d = request.form['c']
+                grade_scale.d_f = request.form['d']
+                
+                #update grade factor
+                grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
+                grade_factor.category1_name = request.form['category_name1']
+                grade_factor.category1_weight = request.form['category_value1']
+                grade_factor.category2_name = request.form.get('category_name2')
+                grade_factor.category2_weight = request.form.get('category_value2')
+                grade_factor.category3_name = request.form.get('category_name3')
+                grade_factor.category3_weight = request.form.get('category_value3')
+                grade_factor.category4_name = request.form.get('category_name4')
+                grade_factor.category4_weight = request.form.get('category_value4')
+                grade_factor.category5_name = request.form.get('category_name5')
+                grade_factor.category5_weight = request.form.get('category_value5')
+                grade_factor.category6_name = request.form.get('category_name6')
+                grade_factor.category6_weight = request.form.get('category_value6')
+                grade_factor.category7_name = request.form.get('category_name7')
+                grade_factor.category7_weight = request.form.get('category_value7')
+                grade_factor.category8_name = request.form.get('category_name8')
+                grade_factor.category8_weight = request.form.get('category_value8')
+                db.session.commit()
+
+                return redirect(f'/class/about/{id}')
+            else:
+                class_obj = models.Class.query.filter_by(id=id).first_or_404()
+                grade_scale = models.GradeScale.query.filter_by(class_id=id).first_or_404()
+                grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
+                return render_template('teacher_class_about.html', class_obj=class_obj, grade_scale=grade_scale, grade_factor=grade_factor)
 
 @app.route('/class/grades/<int:id>')
 def teacher_class_grades(id):
@@ -322,10 +364,10 @@ def classes(id):
     else:
         #check that user is in that class
         student_in_class = models.ClassStudentLink.query.filter_by(student_id=session['user_id'], class_id=id).first_or_404()
-        grades = [{'name':'Homework','assignments':['a','b']},
-                  {'name':'Homework','assignments':['a','b']}
+        grades = [{'name': 'Homework','assignments': ['a', 'b'], 'pct': 80},
+                  {'name': 'Homework','assignments': ['a', 'b'], 'pct': 90}
                  ]           
-        return render_template('student_grades.html', grades=grades, grade_pct=90)
+        return render_template('student_grades.html', grades=grades, grade_letter='A', grade_pct=90)
 
 @app.errorhandler(403)
 def access_denied(e):

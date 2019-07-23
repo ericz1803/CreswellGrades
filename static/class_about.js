@@ -9,11 +9,7 @@ function makeid(length) {
     return result;
 }
 
-//randomly assign a class code on page startup
-window.onload = function () {
-    document.getElementById("join_code").value = makeid(16);
-};
-
+//reroll join coid
 document.getElementById("reroll").addEventListener("click", function () {
     document.getElementById("join_code").value = makeid(16);
 });
