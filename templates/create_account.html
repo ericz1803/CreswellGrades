@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from 'templates.jinja' import emptynav %}
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
@@ -9,13 +10,7 @@
 {% endblock %}
 
 {% block body %}
-    <nav class="navbar navbar-light bg-light">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a style="text-decoration:none;" href="/"><h4>Creswell Grades</h4></a>
-            </li>
-        </ul>
-    </nav>
+    {{ emptynav | safe }}
     <div class="row justify-content-center text-center" id="box" novalidate>
         <div class="col-12 col-md-6">
             <h1 class="h1 mb-3 font-weight-normal">Create Account</h1>
@@ -36,6 +31,9 @@
                             <div class="invalid-feedback">Field cannot be empty.</div>
                         </div>
                     </div>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="email" id="email" class="form-control" placeholder="name@example.com">
                 </div>
                 <div class="form-group">
                     <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>

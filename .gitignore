@@ -1,3 +1,5 @@
+config.py
+
 #vscode
 .vscode/*
 !.vscode/settings.json

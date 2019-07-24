@@ -8,6 +8,10 @@ import os
 from functools import wraps
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from wtforms import PasswordField
+from flask_mail import Mail, Message
+import flask_bcrypt
+import string
+import random
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
@@ -18,6 +22,7 @@ import models
 
 csrf = CSRFProtect()
 csrf.init_app(app)
+mail = Mail(app)
 
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
@@ -124,6 +129,42 @@ def login():
         else:
             return render_template('login.html')
 
+
+@app.route('/forgot', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        print(email)
+        user = models.Users.query.filter_by(email=email).first()
+        if not user:
+            return abort(415)
+
+        msg = Message('Reset password.', recipients=[email])
+        #generate random string
+        reset_link = ''.join(random.choices(string.ascii_letters + string.digits, k=60))
+        user.password_reset = reset_link
+        db.session.commit()
+        msg.body = f"Hi {user.username},\n\nUse this link to reset your password:\nhttps://creswell-grades.herokuapp.com/reset/{reset_link}"
+        with app.app_context():
+            mail.send(msg)
+            print("SENT")
+        return redirect('login')
+    else:
+        return render_template('forgot.html')
+
+@app.route('/reset/<reset>', methods=['GET','POST'])
+def reset(reset):
+    if request.method == 'POST':
+        user = models.Users.query.filter_by(password_reset=reset).first_or_404()
+        user.set_password(request.form['password'])
+        user.password_reset = None
+        db.session.commit()
+        return redirect('login')
+    else:
+        print(reset)
+        user = models.Users.query.filter_by(password_reset=reset).first_or_404()
+        return render_template('reset.html', username=user.username)
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -137,12 +178,13 @@ def create_account():
         last_name = request.form['lastname']
         password = request.form['password']
         password_confirm = request.form['passwordconfirm']
+        email = request.form.get('email')
         #check if username already exists or password does not match password confirm
         if (models.Users.query.filter_by(username=username).count()>0 or password != password_confirm):
             return render_template('create_account.html')
         else:
             role = models.Role.query.filter_by(name='student').first()
-            user = models.Users(username=username, first_name=first_name, last_name=last_name, role_id = role.id)
+            user = models.Users(username=username, first_name=first_name, last_name=last_name, email=email, role_id=role.id)
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
@@ -159,12 +201,13 @@ def create_teacher_account():
         last_name = request.form['lastname']
         password = request.form['password']
         password_confirm = request.form['passwordconfirm']
+        email = request.form.get('email')
         #check if username already exists or password does not match password confirm
         if (models.Users.query.filter_by(username=username).count()>0 or password != password_confirm):
             return render_template('create_account.html')
         else:
             role = models.Role.query.filter_by(name='teacher').first()
-            user = models.Users(username=username, first_name=first_name, last_name=last_name, role_id = role.id)
+            user = models.Users(username=username, first_name=first_name, last_name=last_name, email=email, role_id=role.id)
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
@@ -369,6 +412,7 @@ def classes(id):
                  ]           
         return render_template('student_grades.html', grades=grades, grade_letter='A', grade_pct=90)
 
+
 @app.errorhandler(403)
 def access_denied(e):
     context = {'error_num': 403,
@@ -384,6 +428,14 @@ def page_doesnt_exist(e):
                'description': 'Page Not Found.'
                }
     return render_template('error.html', context=context), 404
+
+@app.errorhandler(415)
+def user_not_found(e):
+    context = {'error_num': 415,
+               'error_name': 'User Not Found',
+               'description': 'User with that email address not found.'
+               }
+    return render_template('error.html', context=context), 415
 
 @app.errorhandler(500)
 def internal_server_error(e):

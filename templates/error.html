@@ -1,9 +1,12 @@
 {% extends "base.html" %}
+{% from 'templates.jinja' import emptynav %}
+
 
 {% block title %}
     {{context.error_num}}-{{context.error_name}}
 {% endblock %}
 
 {% block body %}
+    {{ emptynav | safe }}
     <h1 style="padding:25px;">{{context.description}}</h1>
 {% endblock %}

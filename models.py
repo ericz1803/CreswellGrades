@@ -19,7 +19,10 @@ class Users(db.Model, UserMixin):
     first_name = db.Column(db.String(127), nullable=False)
     last_name = db.Column(db.String(127), nullable=False)
     password_hash = db.Column(db.LargeBinary(60), nullable=False)
+    password_reset = db.Column(db.String(63))
+    email = db.Column(db.String(63))
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    
 
     assignmentresult = db.relationship('AssignmentResult', back_populates="student")
 
