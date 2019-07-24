@@ -100,7 +100,7 @@ admin.add_link(MenuLink(name='Logout', category='', url='/logout'))
 
 @app.route('/')
 def index():
-    return redirect('login')
+    return redirect('/login')
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -113,7 +113,7 @@ def login():
         else:
             print("Username " + username + " does not exist.")
             flash('Incorrect username or password.')
-            return redirect('login')
+            return redirect('/login')
         
         if user.check_password(password):
             session['user_id'] = user.id
@@ -121,11 +121,11 @@ def login():
         else:
             print("Incorrect password.")
             flash('Incorrect username or password.')
-            return redirect('login')
+            return redirect('/login')
     else:
         #do not let them login if user_id already exists
         if 'user_id' in session.keys():
-            return redirect('user/' + str(session['user_id']))
+            return redirect('/user/' + str(session['user_id']))
         else:
             return render_template('login.html')
 
@@ -148,7 +148,7 @@ def forgot_password():
         with app.app_context():
             mail.send(msg)
             print("SENT")
-        return redirect('login')
+        return redirect('/login')
     else:
         return render_template('forgot.html')
 
@@ -159,7 +159,7 @@ def reset(reset):
         user.set_password(request.form['password'])
         user.password_reset = None
         db.session.commit()
-        return redirect('login')
+        return redirect('/login')
     else:
         print(reset)
         user = models.Users.query.filter_by(password_reset=reset).first_or_404()
@@ -189,7 +189,7 @@ def create_account():
             db.session.add(user)
             db.session.commit()
             db.session.close()
-            return redirect('login')
+            return redirect('/login')
     else:
         return render_template('create_account.html')
 
@@ -212,7 +212,7 @@ def create_teacher_account():
             db.session.add(user)
             db.session.commit()
             db.session.close()
-            return redirect('login')
+            return redirect('/login')
     else:
         return render_template('create_account.html')
 
