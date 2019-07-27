@@ -9,6 +9,7 @@ from functools import wraps
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from wtforms import PasswordField
 from flask_mail import Mail, Message
+from flask_session import Session
 import flask_bcrypt
 import string
 import random
@@ -25,6 +26,10 @@ import models
 csrf = CSRFProtect()
 csrf.init_app(app)
 mail = Mail(app)
+
+if not app.config['DEBUG']:
+    sess = Session()
+    sess.init_app(app)
 
 #admin interface
 class MyAdminIndexView(AdminIndexView):
@@ -340,68 +345,70 @@ def create_class():
 @login_required
 @teacher_required
 def teacher_class(id):
+    #check that the right teacher is accessing it
+    if models.Class.query.filter_by(id=id).first_or_404().teacher_id != session['user_id']:
+        return abort(403)
+
     return redirect('/class/grades/' + str(id))
 
 @app.route('/class/about/<int:id>', methods=['GET', 'POST'])
 @login_required
 @teacher_required
 def teacher_class_about(id):
-    user = models.Users.query.filter_by(id=session['user_id']).first_or_404()
-    #check that user is teacher
-    if user.role_id != 3:
+    #check that the right teacher is accessing it
+    if models.Class.query.filter_by(id=id).first_or_404().teacher_id != session['user_id']:
         return abort(403)
-    else:
-        if request.method == 'POST':
-            #update class obj
-            class_obj = models.Class.query.filter_by(id=id).first_or_404()
-            class_obj.name = request.form['class_name']
-            class_obj.join_code = request.form['join_code']
-            
-            #update grade scale
-            grade_scale = models.GradeScale.query.filter_by(class_id=id).first_or_404()
-            grade_scale.a_b = request.form['a']
-            grade_scale.b_c = request.form['b']
-            grade_scale.c_d = request.form['c']
-            grade_scale.d_f = request.form['d']
-            
-            #update grade factor
-            grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
-            grade_factor.category1_name = request.form['category_name1']
-            grade_factor.category1_weight = request.form['category_value1']
-            grade_factor.category2_name = request.form.get('category_name2')
-            grade_factor.category2_weight = request.form.get('category_value2')
-            grade_factor.category3_name = request.form.get('category_name3')
-            grade_factor.category3_weight = request.form.get('category_value3')
-            grade_factor.category4_name = request.form.get('category_name4')
-            grade_factor.category4_weight = request.form.get('category_value4')
-            grade_factor.category5_name = request.form.get('category_name5')
-            grade_factor.category5_weight = request.form.get('category_value5')
-            grade_factor.category6_name = request.form.get('category_name6')
-            grade_factor.category6_weight = request.form.get('category_value6')
-            grade_factor.category7_name = request.form.get('category_name7')
-            grade_factor.category7_weight = request.form.get('category_value7')
-            grade_factor.category8_name = request.form.get('category_name8')
-            grade_factor.category8_weight = request.form.get('category_value8')
-            db.session.commit()
 
-            return redirect(f'/class/about/{id}')
-        else:
-            class_obj = models.Class.query.filter_by(id=id).first_or_404()
-            grade_scale = models.GradeScale.query.filter_by(class_id=id).first_or_404()
-            grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
-            return render_template('teacher_class_about.html', class_obj=class_obj, grade_scale=grade_scale, grade_factor=grade_factor)
+    if request.method == 'POST':
+        #update class obj
+        class_obj = models.Class.query.filter_by(id=id).first_or_404()
+        class_obj.name = request.form['class_name']
+        class_obj.join_code = request.form['join_code']
+        
+        #update grade scale
+        grade_scale = models.GradeScale.query.filter_by(class_id=id).first_or_404()
+        grade_scale.a_b = request.form['a']
+        grade_scale.b_c = request.form['b']
+        grade_scale.c_d = request.form['c']
+        grade_scale.d_f = request.form['d']
+        
+        #update grade factor
+        grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
+        grade_factor.category1_name = request.form['category_name1']
+        grade_factor.category1_weight = request.form['category_value1']
+        grade_factor.category2_name = request.form.get('category_name2')
+        grade_factor.category2_weight = request.form.get('category_value2')
+        grade_factor.category3_name = request.form.get('category_name3')
+        grade_factor.category3_weight = request.form.get('category_value3')
+        grade_factor.category4_name = request.form.get('category_name4')
+        grade_factor.category4_weight = request.form.get('category_value4')
+        grade_factor.category5_name = request.form.get('category_name5')
+        grade_factor.category5_weight = request.form.get('category_value5')
+        grade_factor.category6_name = request.form.get('category_name6')
+        grade_factor.category6_weight = request.form.get('category_value6')
+        grade_factor.category7_name = request.form.get('category_name7')
+        grade_factor.category7_weight = request.form.get('category_value7')
+        grade_factor.category8_name = request.form.get('category_name8')
+        grade_factor.category8_weight = request.form.get('category_value8')
+        db.session.commit()
+
+        return redirect(f'/class/about/{id}')
+    else:
+        class_obj = models.Class.query.filter_by(id=id).first_or_404()
+        grade_scale = models.GradeScale.query.filter_by(class_id=id).first_or_404()
+        grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
+        return render_template('teacher_class_about.html', class_obj=class_obj, grade_scale=grade_scale, grade_factor=grade_factor)
 
 @app.route('/class/grades/<int:id>')
 @login_required
 @teacher_required
 def teacher_class_grades(id):
-    user = models.Users.query.filter_by(id=session['user_id']).first_or_404()
-    #check that user is teacher
-    if user.role_id != 3:
+    #check that the right teacher is accessing it
+    if models.Class.query.filter_by(id=id).first_or_404().teacher_id != session['user_id']:
         return abort(403)
-    else:
-        class_obj = models.Class.query.filter_by(id=id).first_or_404()
-        return render_template('teacher_class_grades.html', class_obj=class_obj)
+        
+    class_obj = models.Class.query.filter_by(id=id).first_or_404()
+    return render_template('teacher_class_grades.html', class_obj=class_obj)
 
 @app.route('/join', methods=['GET', 'POST'])
 @login_required

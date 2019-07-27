@@ -19,6 +19,8 @@ flask-user = "*"
 flask-bcrypt = "*"
 flask-wtf = "*"
 flask-admin = "*"
+flask-session = "*"
+redis = "*"
 
 [requires]
 python_version = "3.6"

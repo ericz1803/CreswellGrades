@@ -1,7 +1,7 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 import warnings
-
+import redis
 
 class Config(object):
     DEBUG = False
@@ -16,6 +16,7 @@ class Config(object):
     MAIL_USERNAME = 'creswellgrades@gmail.com'
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER='creswellgrades@gmail.com'
+    SESSION_TYPE = 'null'
 
     if not SECRET_KEY:
         warnings.warn("Secret Key not set.")
@@ -23,6 +24,9 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
+    SESSION_TYPE = 'redis'
+    SESSION_REDIS = redis.from_url(os.environ.get("REDIS_URL")) if os.environ.get("REDIS_URL") else redis.Redis(host='localhost', port=6379, db=0)
+
 
 
 class DevelopmentConfig(Config):
