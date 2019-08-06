@@ -1,17 +1,18 @@
 {% extends "base.html" %}
 
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='teacher_class_grades.css') }}">
+{% endblock %}
+
 {% block title %}
     {{class_obj.name}} Grades
 {% endblock %}
 
-
 {% block body %}
     <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/"><h4>Creswell Grades</h4></a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
-                <li class="navbar-brand">
-                    <a style="text-decoration:none;" href="/"><h4>Creswell Grades</h4></a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/class/about/{{ class_obj.id }}"><h5>About</h5></a>
                 </li>
@@ -28,4 +29,62 @@
         </div>
     </nav>
 
+    <div class="grades">
+        <div class="inner">
+            <table class="table table-striped">
+                <thead class="padding-small">
+                    <tr>
+                        <th class="first"></th>
+                        <td class="total">Total</td>
+                        {% for assignment in assignments %}
+                            <td id="assignment_{{ assignment.id }}_name">{{ assignment.assignment_name }}<br><button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button></td>
+                        {% endfor %}
+                        <th id="add-new"><button class="btn btn-primary" id="new-assignment"><i class="fas fa-plus-circle"></i></button></th>
+                    </tr>
+                    <tr>
+                        <th class="first">Date Due</th>
+                        <td class="total"></td>
+                        {% for assignment in assignments %}
+                            <td id="assignment_{{ assignment.id }}_date">{{ assignment.assignment_date }}</td>
+                        {% endfor %}
+                        <td id="new_date"></td>
+                    </tr>
+                    <tr>
+                        <th class="first">Category</th>
+                        <td class="total"></td>
+                        {% for assignment in assignments %}
+                            <td id="assignment_{{ assignment.id }}_category">{{ grade_factor['category' ~ assignment.assignment_type ~ '_name'] }}</td>
+                        {% endfor %}
+                        <td id="new_category"></td>
+                    </tr>
+                    <tr>
+                        <th class="first">Pts Possible</th>
+                        <td class="total"></td>
+                        {% for assignment in assignments %}
+                            <td id="assignment_{{ assignment.id }}_points">{{ assignment.total_points }}</td>
+                        {% endfor %}
+                        <td id="new_points"></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <th class="first">{{ student.first_name }} {{ student.last_name }}</th>
+                        <td class="total"></td>
+                        {% for assignment in assignments %}
+                            {% for assignment_result in assignment_results[student.id] if assignment_result.assignment_id == assignment.id%}
+                                <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points">{{ assignment_result.points_earned }}</td>
+                            {% else %}
+                                <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points"></td>
+                            {% endfor %} 
+                        {% endfor %}
+                        <td id="student_{{ student.id }}_new_points"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='teacher_class_grades.js') }}"></script>
 {% endblock %}

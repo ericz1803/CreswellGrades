@@ -1,0 +1,46 @@
+.table td, th {
+    text-align: right;
+}
+
+.table td:first-child, th:first-child, th:nth-child(2), td:nth-child(2) {
+    text-align: left;
+}​
+
+.padding-small>tr>th, .padding-small>tr>td {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+}
+
+th {
+    position: absolute;
+    width: 125px;
+    left: 0;
+}
+
+.grades {
+    margin: 5px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.inner {
+    overflow-x: scroll;
+    width: calc(100% - 10px - 375px);
+    margin-left: 255px;
+}
+
+.total {
+    position:absolute;
+    width: 125px;
+    left: 130px;
+}
+
+#add-new {
+    position: absolute;
+    width: 125px;
+    left: calc(100% - 130px);
+}
+
+.first {
+    border-bottom: 0px !important;
+}

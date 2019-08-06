@@ -14,6 +14,7 @@ import flask_bcrypt
 import string
 import random
 from functools import wraps
+from collections import defaultdict
 
 #init
 app = Flask(__name__)
@@ -182,6 +183,7 @@ def forgot_password():
         reset_link = ''.join(random.choices(string.ascii_letters + string.digits, k=60))
         user.password_reset = reset_link
         db.session.commit()
+        db.session.close()
         msg.body = f"Hi {user.username},\n\nUse this link to reset your password:\nhttps://creswell-grades.herokuapp.com/reset/{reset_link}"
         with app.app_context():
             mail.send(msg)
@@ -197,6 +199,7 @@ def reset(reset):
         user.set_password(request.form['password'])
         user.password_reset = None
         db.session.commit()
+        db.session.close()
         return redirect('/login')
     else:
         print(reset)
@@ -408,7 +411,24 @@ def teacher_class_grades(id):
         return abort(403)
         
     class_obj = models.Class.query.filter_by(id=id).first_or_404()
-    return render_template('teacher_class_grades.html', class_obj=class_obj)
+    grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
+    
+    assignments = models.Assignment.query.filter_by(class_id=id).all()
+    print(assignments)
+    students, _ = zip(*(db.session.query(models.Users, models.ClassStudentLink)
+                .join(models.ClassStudentLink, models.ClassStudentLink.student_id == models.Users.id)
+                .filter(models.ClassStudentLink.class_id==id).all()))
+    print(students)
+    _, _, assignment_results = zip(*(db.session.query(models.Assignment, models.Class, models.AssignmentResult)
+                .join(models.Class, models.Assignment.class_id == models.Class.id)
+                .join(models.AssignmentResult, models.Assignment.id == models.AssignmentResult.assignment_id)
+                .filter(models.Class.id == id).order_by(models.AssignmentResult.student_id).all()))
+    assignment_results_dict = defaultdict(list)
+    for assignment_result in assignment_results:
+        assignment_results_dict[assignment_result.student_id].append(assignment_result)
+
+    print(assignment_results, assignment_results_dict.items())
+    return render_template('teacher_class_grades.html', students=list(students), class_obj=class_obj, assignments=assignments, grade_factor=grade_factor, assignment_results=assignment_results_dict)
 
 @app.route('/join', methods=['GET', 'POST'])
 @login_required

@@ -1,4 +1,4 @@
-# [CreswellGrades](https://creswell-grades-pro.herokuapp.com/)
+# [CreswellGrades](https://creswell-grades.herokuapp.com/)
 
 ## Install
  
