@@ -13,6 +13,7 @@ from flask_session import Session
 import flask_bcrypt
 import string
 import random
+import secrets
 from functools import wraps
 from collections import defaultdict
 
@@ -156,6 +157,7 @@ def login():
         
         if user.check_password(password):
             session['user_id'] = user.id
+            session['secret_key'] = secrets.token_hex(32)
             return redirect('user/' + str(session['user_id']))
         else:
             print("Incorrect password.")
@@ -394,6 +396,7 @@ def teacher_class_about(id):
         grade_factor.category8_name = request.form.get('category_name8')
         grade_factor.category8_weight = request.form.get('category_value8')
         db.session.commit()
+        db.session.close()
 
         return redirect(f'/class/about/{id}')
     else:
@@ -413,22 +416,24 @@ def teacher_class_grades(id):
     class_obj = models.Class.query.filter_by(id=id).first_or_404()
     grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
     
-    assignments = models.Assignment.query.filter_by(class_id=id).all()
-    print(assignments)
+    assignments = models.Assignment.query.filter_by(class_id=id).order_by(models.Assignment.assignment_type, models.Assignment.assignment_date, models.Assignment.id).all()
+    #print(assignments)
     students, _ = zip(*(db.session.query(models.Users, models.ClassStudentLink)
                 .join(models.ClassStudentLink, models.ClassStudentLink.student_id == models.Users.id)
                 .filter(models.ClassStudentLink.class_id==id).all()))
-    print(students)
+    #print(students)
     _, _, assignment_results = zip(*(db.session.query(models.Assignment, models.Class, models.AssignmentResult)
-                .join(models.Class, models.Assignment.class_id == models.Class.id)
-                .join(models.AssignmentResult, models.Assignment.id == models.AssignmentResult.assignment_id)
-                .filter(models.Class.id == id).order_by(models.AssignmentResult.student_id).all()))
+                                    .join(models.Class, models.Assignment.class_id == models.Class.id)
+                                    .join(models.AssignmentResult, models.Assignment.id == models.AssignmentResult.assignment_id)
+                                    .filter(models.Class.id == id).order_by(models.AssignmentResult.student_id).all()))
     assignment_results_dict = defaultdict(list)
     for assignment_result in assignment_results:
         assignment_results_dict[assignment_result.student_id].append(assignment_result)
 
-    print(assignment_results, assignment_results_dict.items())
-    return render_template('teacher_class_grades.html', students=list(students), class_obj=class_obj, assignments=assignments, grade_factor=grade_factor, assignment_results=assignment_results_dict)
+    #print(assignment_results, assignment_results_dict.items())
+    return render_template('teacher_class_grades.html', students=list(students), class_obj=class_obj, \
+           assignments=assignments, grade_factor=grade_factor, assignment_results=assignment_results_dict, \
+           secret_key=session['secret_key'])
 
 @app.route('/join', methods=['GET', 'POST'])
 @login_required
@@ -459,6 +464,36 @@ def classes(id):
                 ]           
     return render_template('student_grades.html', grades=grades, grade_letter='A', grade_pct=90)
 
+@app.route('/ajax/update-grades', methods=['GET', 'POST'])
+@login_required
+@teacher_required
+def update_grades():
+    if request.method == 'POST':
+        print(request.json)
+
+        assignment = models.Assignment.query.get_or_404(request.json['assignment_id'])
+        assignment.assignment_name = request.json['name']
+        assignment.assignment_type = request.json['category']
+        assignment.assignment_date = request.json['date']
+        assignment.total_points = request.json['points']
+        for (student_id, points) in request.json['student_points']:
+            if points is not None:
+                result = models.AssignmentResult.query.filter_by(assignment_id=assignment.id, student_id=student_id).all()
+                if result:
+                    result[0].student_id = student_id
+                    result[0].points_earned = points
+                else:
+                    new_result = models.AssignmentResult(student_id=student_id, assignment_id=assignment.id, points_earned=points)
+                    db.session.add(new_result)
+        db.session.commit()
+        db.session.close()
+        return jsonify(saved=True)
+    else:
+        return jsonify(saved=False)
+
+@app.route('/ajax/username-taken/<string:name>')
+def check_username_taken(name):
+    return jsonify(taken=(models.Users.query.filter_by(username=name).count()>0))
 
 @app.errorhandler(403)
 def access_denied(e):
@@ -504,9 +539,7 @@ def csrf_error(e):
 def favicon():
     return send_from_directory('static', 'images/favicon.ico')
 
-@app.route('/ajax/username-taken/<string:name>')
-def check_username_taken(name):
-    return jsonify(taken=(models.Users.query.filter_by(username=name).count()>0))
+
 
 if __name__ == '__main__':
     app.run()

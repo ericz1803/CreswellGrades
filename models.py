@@ -95,6 +95,7 @@ class AssignmentResult(db.Model):
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignment.id'))
     assignment = db.relationship('Assignment', back_populates='assignment_result')
     points_earned = db.Column(db.Float(), nullable=False)
+    
 class ClassStudentLink(db.Model):
     __tablename__ = 'classstdentlink'
     id = db.Column(db.Integer, primary_key=True)

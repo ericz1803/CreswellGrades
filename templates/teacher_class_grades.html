@@ -29,56 +29,83 @@
         </div>
     </nav>
 
+    <input type="hidden" id="secret-key" value="{{ secret_key }}">
+
+    <!-- grade factor dropdown -->
+    <div id="category-selector" style="display: none;">
+        <select class="custom-select">
+            {% for i in range(1, 9) %}
+                {% if grade_factor['category' ~ i ~ '_name'] is not none %}
+                    <option value="{{ i }}">{{ grade_factor['category' ~ i ~ '_name'] }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
     <div class="grades">
         <div class="inner">
             <table class="table table-striped">
                 <thead class="padding-small">
-                    <tr>
+                    <tr class="name-row">
                         <th class="first"></th>
                         <td class="total">Total</td>
                         {% for assignment in assignments %}
-                            <td id="assignment_{{ assignment.id }}_name">{{ assignment.assignment_name }}<br><button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button></td>
+                            <td id="assignment_{{ assignment.id }}_name" class="assignment_{{ assignment.id }}">{{ assignment.assignment_name }}</td>
                         {% endfor %}
+                        <td class="second-last"> </td>
+                        <td id="new_name" class="new"> </td>
+                    </tr>
+                    <tr class="button-row">
+                        <th class="first"> </th>
+                        <td class="total"> </td>
+                        {% for assignment in assignments %}
+                            <td class="assignment_{{ assignment.id }}"><button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button></td>
+                        {% endfor %}
+                        <td class="second-last"> </td>
                         <th id="add-new"><button class="btn btn-primary" id="new-assignment"><i class="fas fa-plus-circle"></i></button></th>
                     </tr>
-                    <tr>
-                        <th class="first">Date Due</th>
+                    <tr class="date-row">
+                        <th class="first" style="font-weight:500;">Date Due</th>
                         <td class="total"></td>
                         {% for assignment in assignments %}
-                            <td id="assignment_{{ assignment.id }}_date">{{ assignment.assignment_date }}</td>
+                            <td id="assignment_{{ assignment.id }}_date" class="assignment_{{ assignment.id }}">{{ assignment.assignment_date }}</td>
                         {% endfor %}
-                        <td id="new_date"></td>
+                        <td class="second-last"> </td>
+                        <td id="new_date" class="new"> </td>
                     </tr>
-                    <tr>
-                        <th class="first">Category</th>
+                    <tr class="category-row">
+                        <th class="first" style="font-weight:500;">Category</th>
                         <td class="total"></td>
                         {% for assignment in assignments %}
-                            <td id="assignment_{{ assignment.id }}_category">{{ grade_factor['category' ~ assignment.assignment_type ~ '_name'] }}</td>
+                            <td id="assignment_{{ assignment.id }}_category" class="assignment_{{ assignment.id }}">{{ grade_factor['category' ~ assignment.assignment_type ~ '_name'] }}</td>
                         {% endfor %}
-                        <td id="new_category"></td>
+                        <td class="second-last"> </td>
+                        <td id="new_category" class="new"> </td>
                     </tr>
-                    <tr>
-                        <th class="first">Pts Possible</th>
+                    <tr class="pts-row">
+                        <th class="first" style="font-weight:500;">Pts Possible</th>
                         <td class="total"></td>
                         {% for assignment in assignments %}
-                            <td id="assignment_{{ assignment.id }}_points">{{ assignment.total_points }}</td>
+                            <td id="assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}">{{ assignment.total_points }}</td>
                         {% endfor %}
-                        <td id="new_points"></td>
+                        <td class="second-last"> </td>
+                        <td id="new_points" class="new"> </td>
                     </tr>
                 </thead>
                 <tbody>
                     {% for student in students %}
-                    <tr>
+                    <tr class="num-row">
                         <th class="first">{{ student.first_name }} {{ student.last_name }}</th>
                         <td class="total"></td>
                         {% for assignment in assignments %}
                             {% for assignment_result in assignment_results[student.id] if assignment_result.assignment_id == assignment.id%}
-                                <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points">{{ assignment_result.points_earned }}</td>
+                                <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}">{{ assignment_result.points_earned }}</td>
                             {% else %}
-                                <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points"></td>
+                                <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}"></td>
                             {% endfor %} 
                         {% endfor %}
-                        <td id="student_{{ student.id }}_new_points"></td>
+                        <td class="second-last"> </td>
+                        <td id="student_{{ student.id }}_new_points" class="new"> </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -86,5 +113,17 @@
         </div>
     </div>
 
+    <!-- CSRF Protection -->
+    <script type="text/javascript">
+        var csrf_token = "{{ csrf_token() }}";
+    
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            }
+        });
+    </script>
     <script src="{{ url_for('static', filename='teacher_class_grades.js') }}"></script>
 {% endblock %}
