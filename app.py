@@ -468,7 +468,7 @@ def classes(id):
 @login_required
 @teacher_required
 def update_grades():
-    if request.method == 'POST':
+    if request.method == 'POST' and request.headers['secret_key'] == session['secret_key']:
         print(request.json)
 
         assignment = models.Assignment.query.get_or_404(request.json['assignment_id'])
@@ -485,6 +485,32 @@ def update_grades():
                 else:
                     new_result = models.AssignmentResult(student_id=student_id, assignment_id=assignment.id, points_earned=points)
                     db.session.add(new_result)
+        db.session.commit()
+        db.session.close()
+        return jsonify(saved=True)
+    else:
+        return jsonify(saved=False)
+
+@app.route('/ajax/new-grades', methods=['GET', 'POST'])
+@login_required
+@teacher_required
+def new_grades():
+    if request.method == 'POST' and request.headers['secret_key'] == session['secret_key']:
+        print(request.json)
+        
+        new_assignment = models.Assignment(assignment_name=request.json['name'], assignment_type=request.json['category'], \
+                         assignment_date=request.json['date'], total_points=request.json['points'], class_id=request.json['id'])
+        db.session.add(new_assignment)
+        for (student_id, points) in request.json['student_points']:
+            if points is not None:
+                result = models.AssignmentResult.query.filter_by(assignment_id=new_assignment.id, student_id=student_id).all()
+                if result:
+                    result[0].student_id = student_id
+                    result[0].points_earned = points
+                else:
+                    new_result = models.AssignmentResult(student_id=student_id, assignment_id=new_assignment.id, points_earned=points)
+                    db.session.add(new_result)
+        
         db.session.commit()
         db.session.close()
         return jsonify(saved=True)

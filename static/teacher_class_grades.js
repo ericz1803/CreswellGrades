@@ -1,10 +1,127 @@
 var currently_editing = [];
-//add new assignment
-document.getElementById('new-assignment').addEventListener('click', function() {
-    alert('clicked');
+var assignment_queue = [];
 
-    let elements = document.elements.getElementsByClassName("new");
-});
+//add new assignment
+function newAssignment(e) {
+    e.parentElement.innerHTML = '<button class="btn btn-primary" onclick="cancelSubmitNewAssignment(this)"><i class="fas fa-times"></i></button> <button class="btn btn-primary" onclick="submitNewAssignment(this)"><i class="fas fa-check"></i></button>';
+    let elements = document.querySelectorAll(".new");
+    for (let element of elements) {
+        //select input type
+        switch (element.parentElement.className) {
+            case "name-row":
+                element.innerHTML = `<input class="form-control input-sm" type="text" placeholder="Assignment Name">`;
+                break;
+            case "date-row":
+                element.innerHTML = `<input class="form-control input-sm" type="date">`;
+                let today = new Date();
+                element.children[0].value = today.toISOString().substr(0,10);
+                break;
+            case "category-row":
+                let contents = element.innerHTML;
+                element.innerHTML = document.getElementById('category-selector').innerHTML;
+                break;
+            case "pts-row":
+            case "num-row":
+                element.innerHTML = `<input class="form-control input-sm" type="number" value="" step=0.1>`;
+                break;
+        }
+    }
+}
+
+function cancelSubmitNewAssignment(e) {
+    //TODO
+    e.parentElement.innerHTML = '<button class="btn btn-primary" onclick="newAssignment(this)"><i class="fas fa-plus-circle"></i></button>';
+    let elements = document.querySelectorAll(".new");
+    values_json = {student_points: []};
+    for (let element of elements) {
+        switch (element.parentElement.className) {
+            case "button-row":
+                break;
+            default:
+                element.innerHTML = "";
+        }
+    }
+}
+
+function submitNewAssignment(e) {
+    let valid = true;
+    //check if everything is filled out
+    let elements = document.querySelectorAll(".new");
+    for (let element of elements) {
+        switch (element.parentElement.className) {
+            case "name-row":
+            case "date-row":
+            case "pts-row":
+                if (element.children[0].value.length == 0) {
+                    element.children[0].classList.add("is-invalid");
+                    valid = false;
+                } else {
+                    element.children[0].classList.remove("is-invalid");
+                }
+                
+        }
+    }
+    //quit if not
+    if (valid == false) {
+        return;
+    }
+
+    //handle submission
+    e.parentElement.innerHTML = '<button class="btn btn-primary" onclick="newAssignment(this)"><i class="fas fa-plus-circle"></i></button>';
+    let class_id = document.getElementById("class-id").value;
+    let values_json = {student_points: [], id: class_id};
+    for (let element of elements) {
+        switch (element.parentElement.className) {
+            case "button-row":
+                break;
+            case "category-row":
+                let e = element.children[0];
+                values_json["category"] = parseInt(e.options[e.selectedIndex].value);
+                element.innerHTML = "";
+                break;
+            case "num-row":
+                let student_id = element.id.split('_')[1];
+                let val = element.children[0].value;
+                values_json.student_points.push([parseInt(student_id), parseFloat(val)]);
+                element.innerHTML = "";
+                break;
+            case "pts-row":
+                let v = element.children[0].value;
+            
+                values_json[element.id.split('_')[1]] = parseFloat(v);
+                element.innerHTML = "";
+                break;
+            default:
+                //name, date
+                let val_ = element.children[0].value;
+                
+                values_json[element.id.split('_')[1]] = val_;
+                element.innerHTML = "";
+                break;
+
+        }
+    }
+    console.log(values_json);
+
+    //send json to server
+    let secret_key = document.getElementById('secret-key').value;
+    $.ajax({
+        url: '/ajax/new-grades',
+        type: "POST",
+        headers: {
+            'secret_key': secret_key,
+        },
+        data: JSON.stringify(values_json, null, '\t'),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(response) {
+            if (response["saved"]) {
+                console.log("Saved.");
+            } else {
+                console.log("Unable to save");
+            }
+        }
+    });
+}
 
 //edit assignment
 function edit(e) {
@@ -14,7 +131,7 @@ function edit(e) {
         return;
     }
     currently_editing.push(p.className);
-    let elements = document.getElementsByClassName(p.className);
+    let elements = document.querySelectorAll("." + p.className);
     
 
     //match button element
@@ -38,7 +155,7 @@ function edit(e) {
                 break;
             case "pts-row":
             case "num-row":
-                element.innerHTML = `<input class="form-control input-sm" type="number" value="${element.innerHTML}" step=0.01>`;
+                element.innerHTML = `<input class="form-control input-sm" type="number" value="${element.innerHTML}" step=0.1>`;
                 break;
         }
     }
@@ -62,7 +179,7 @@ function doneEdit(e) {
 
     //remove input fields and package data into json
     values_json = {assignment_id: parseInt(p.className.slice(11), 10), student_points: []};
-    let elements = document.getElementsByClassName(p.className);
+    let elements = document.querySelectorAll("." + p.className);
     for (let element of elements) {
         switch (element.parentElement.className) {
             case "button-row":
