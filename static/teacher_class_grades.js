@@ -25,6 +25,10 @@ function newAssignment(e) {
                 element.innerHTML = `<input class="form-control input-sm" type="number" value="" step=0.1>`;
                 break;
         }
+        
+        //fix padding
+        element.style.paddingTop = '0.375rem';
+        element.style.paddingBottom = '0.375rem';
     }
 }
 
@@ -40,6 +44,9 @@ function cancelSubmitNewAssignment(e) {
             default:
                 element.innerHTML = "";
         }
+        //fix padding
+        element.style.paddingTop = '0.75rem';
+        element.style.paddingBottom = '0.75rem';
     }
 }
 
@@ -57,9 +64,11 @@ function submitNewAssignment(e) {
                     valid = false;
                 } else {
                     element.children[0].classList.remove("is-invalid");
-                }
-                
+                }  
         }
+        //fix padding
+        element.style.paddingTop = '0.75rem';
+        element.style.paddingBottom = '0.75rem';
     }
     //quit if not
     if (valid == false) {
@@ -98,7 +107,6 @@ function submitNewAssignment(e) {
                 values_json[element.id.split('_')[1]] = val_;
                 element.innerHTML = "";
                 break;
-
         }
     }
     console.log(values_json);
@@ -158,6 +166,9 @@ function edit(e) {
                 element.innerHTML = `<input class="form-control input-sm" type="number" value="${element.innerHTML}" step=0.1>`;
                 break;
         }
+        //fix padding
+        element.style.paddingTop = '0.375rem';
+        element.style.paddingBottom = '0.375rem';
     }
 }
 
@@ -208,8 +219,10 @@ function doneEdit(e) {
                 values_json[element.id.split('_')[2]] = val_;
                 element.innerHTML = val_;
                 break;
-
         }
+        //fix padding
+        element.style.paddingTop = '0.75rem';
+        element.style.paddingBottom = '0.75rem';
     }
     
     //send json to server

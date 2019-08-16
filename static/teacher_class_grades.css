@@ -25,6 +25,10 @@ th {
     left: 0;
 }
 
+td {
+    min-width: 125px;
+}
+
 .grades {
     margin: 5px;
     overflow-x: hidden;
@@ -54,6 +58,7 @@ th {
     left: calc(100% - 205px);
     border-bottom: 0px !important;
 }
+
 .new {
     position: absolute;
     width: 200px;

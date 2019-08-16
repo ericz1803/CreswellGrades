@@ -6,14 +6,16 @@
 {% endblock %}
 
 {% block title %}
-    Student Grades
+    {{ class_obj.name }} Grades
 {% endblock %}
 
 {% block body %}
     {{ basicnav | safe }}
     <div class="grades">
-        {% for category in grades %}
-            <h2>{{ category.name }}</h2>
+        <h1>{{ class_obj.name }} Grades</h1>
+        {% for k, v in grades.items() %}
+            <h2 id="category_name_{{ k }}" class="names">{{ grade_factor['category' ~ k ~ '_name'] }}</h2>
+            <input type="hidden" id="category_value_{{ k }}" class="weights" value="{{ grade_factor['category' ~ k ~ '_weight'] }}">
             <table class="table table-striped">
                 <tr>
                     <th>Name</th>
@@ -22,29 +24,29 @@
                     <th>Max Points</th>
                     <th>Percentage</th>
                 </tr>
-                {% set points_counter = 0 %}
-                {% set max_points_counter = 0 %}
-                {% for assignment in category.assignments %}
+                {% for assignment, result in v %}
                     <tr>
-                        <td>Assignment Name</td>
-                        <td>1/1/2019</td>
-                        <td>2</td>
-                        <td>3</td>
-                        <td>66.7</td>
+                        <td id="category_{{ k }}_assignment_{{ assignment.id }}_name" class="category_{{ k }}">{{ assignment.assignment_name }}</td>
+                        <td id="category_{{ k }}_assignment_{{ assignment.id }}_date" class="category_{{ k }}">{{ assignment.assignment_date }}</td>
+                        <td id="category_{{ k }}_assignment_{{ assignment.id }}_points" class="category_{{ k }}">{% if result is defined %} {{ result.points_earned }} {% endif %}</td>
+                        <td id="category_{{ k }}_assignment_{{ assignment.id }}_total_points" class="category_{{ k }}">{{ assignment.total_points }}</td>
+                        <td id="category_{{ k }}_assignment_{{ assignment.id }}_percentage" class="category_{{ k }}"></td>
                     </tr>
                 {% endfor %}
                 <tr>
-                    <td class="font-weight-bold">{{category.name}} Total</td>
-                    <td></td>
-                    <td class="font-weight-bold">4</td>
-                    <td class="font-weight-bold">6</td>
-                    <td class="font-weight-bold">66.7</td>
+                    <th>{{ grade_factor['category' ~ k ~ '_name'] }} Total</th>
+                    <th> </th>
+                    <th id="category_{{ k }}_total_points" class="category_{{ k }}"></th>
+                    <th id="category_{{ k }}_total_total_points" class="category_{{ k }}"></th>
+                    <th id="category_{{ k }}_total_percentage" class="category_{{ k }}"></th>
                 </tr>
             </table>
         {% endfor %}
         <div class="row">
             <div class="col-8"><h1>Final Grade</h1></div>
-            <div class="col-4 text-right"><h1>{{ grade_letter }}  {{ grade_pct }}</h1></div>
+            <div class="col-4 text-right"><h1><span id="grade-letter"></span>  <span id="grade-pct"></span></h1></div>
         </div>
     </div>
+
+    <script src="{{ url_for('static', filename='student_grades.js') }}"></script>
 {% endblock %}

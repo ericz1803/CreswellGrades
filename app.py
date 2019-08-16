@@ -418,21 +418,25 @@ def teacher_class_grades(id):
     
     assignments = models.Assignment.query.filter_by(class_id=id).order_by(models.Assignment.assignment_type, models.Assignment.assignment_date, models.Assignment.id).all()
     #print(assignments)
-    students, _ = zip(*(db.session.query(models.Users, models.ClassStudentLink)
-                .join(models.ClassStudentLink, models.ClassStudentLink.student_id == models.Users.id)
-                .filter(models.ClassStudentLink.class_id==id).all()))
+    students = db.session.query(models.Users, models.ClassStudentLink) \
+                .join(models.ClassStudentLink, models.ClassStudentLink.student_id == models.Users.id) \
+                .filter(models.ClassStudentLink.class_id==id).all()
+    if students:
+        students, _ = zip(*(students))
     #print(students)
-    _, _, assignment_results = zip(*(db.session.query(models.Assignment, models.Class, models.AssignmentResult)
-                                    .join(models.Class, models.Assignment.class_id == models.Class.id)
-                                    .join(models.AssignmentResult, models.Assignment.id == models.AssignmentResult.assignment_id)
-                                    .filter(models.Class.id == id).order_by(models.AssignmentResult.student_id).all()))
+    assignment_results = db.session.query(models.Assignment, models.Class, models.AssignmentResult) \
+                        .join(models.Class, models.Assignment.class_id == models.Class.id) \
+                        .join(models.AssignmentResult, models.Assignment.id == models.AssignmentResult.assignment_id) \
+                        .filter(models.Class.id == id).order_by(models.AssignmentResult.student_id).all()
+    if assignment_results:
+        _, _, assignment_results = zip(*(assignment_results))
     assignment_results_dict = defaultdict(list)
     for assignment_result in assignment_results:
         assignment_results_dict[assignment_result.student_id].append(assignment_result)
 
     #print(assignment_results, assignment_results_dict.items())
-    return render_template('teacher_class_grades.html', students=list(students), class_obj=class_obj, \
-           assignments=assignments, grade_factor=grade_factor, assignment_results=assignment_results_dict, \
+    return render_template('teacher_class_grades.html', students=list(students), class_obj=class_obj,
+           assignments=assignments, grade_factor=grade_factor, assignment_results=assignment_results_dict,
            secret_key=session['secret_key'])
 
 @app.route('/join', methods=['GET', 'POST'])
@@ -458,11 +462,35 @@ def join():
 @student_required
 def classes(id):
     #check that user is in that class
-    student_in_class = models.ClassStudentLink.query.filter_by(student_id=session['user_id'], class_id=id).first_or_404()
-    grades = [{'name': 'Homework','assignments': ['a', 'b'], 'pct': 80},
-                {'name': 'Homework','assignments': ['a', 'b'], 'pct': 90}
-                ]           
-    return render_template('student_grades.html', grades=grades, grade_letter='A', grade_pct=90)
+    _ = models.ClassStudentLink.query.filter_by(student_id=session['user_id'], class_id=id).first_or_404()
+    
+    class_obj = models.Class.query.filter_by(id=id).first_or_404()
+    
+    assignments = models.Assignment.query.filter_by(class_id=id).order_by(models.Assignment.assignment_type, models.Assignment.assignment_date, models.Assignment.id).all()
+
+    grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
+    grade_scale = models.GradeScale.query.filter_by(class_id=id).first_or_404()
+
+    query = db.session.query(models.Assignment, models.Class, models.AssignmentResult) \
+                        .join(models.Class, models.Assignment.class_id == models.Class.id) \
+                        .join(models.AssignmentResult, models.Assignment.id == models.AssignmentResult.assignment_id) \
+                        .filter(models.Class.id == id, models.AssignmentResult.student_id == session['user_id']) \
+                        .order_by(models.Assignment.assignment_type, models.Assignment.assignment_date, models.Assignment.id).all()
+    grades = defaultdict(list)
+    """
+        format:
+        {
+            1: [(assignment, result), (assignment, result)],
+            2: [(assignment, result), (assignment, result)]
+        }
+    """
+    for assignment in assignments:
+        #get result if exists
+        result = next((r for a, c, r in query if a == assignment), None)
+        
+        grades[assignment.assignment_type].append((assignment, result))
+    print(grades)
+    return render_template('student_grades.html', grades=grades, grade_factor=grade_factor, grade_scale=grade_scale, class_obj=class_obj)
 
 @app.route('/ajax/update-grades', methods=['GET', 'POST'])
 @login_required
