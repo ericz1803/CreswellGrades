@@ -15,8 +15,8 @@
 }​
 
 .padding-small>tr>th, .padding-small>tr>td {
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
 }
 
 th {
@@ -25,46 +25,81 @@ th {
     left: 0;
 }
 
-td {
-    min-width: 125px;
-}
-
 .grades {
     margin: 5px;
     overflow-x: hidden;
     position: relative;
 }
 
-.inner {
-    overflow-x: auto;
-    width: calc(100% - 10px - 450px);
-    margin-left: 255px;
-}
-
-.total {
-    position:absolute;
-    width: 125px;
-    left: 130px;
-}
-
-.second-last {
-    padding-left: 100px !important;
-}
-
-#add-new {
-    padding-top: 0.375rem;
-    position: absolute;
-    width: 200px;
-    left: calc(100% - 205px);
-    border-bottom: 0px !important;
-}
-
-.new {
-    position: absolute;
-    width: 200px;
-    left: calc(100% - 205px);
-}
-
 .first {
     border-bottom: 0px !important;
+}
+
+tbody > tr:nth-child(odd) > th {
+    background-color: #f0f2f4;
+}
+
+tbody > tr:nth-child(odd) > td {
+    background-color: #f0f2f4;
+}
+
+@media (max-width: 768px) {
+    .inner {
+        overflow-x: auto;
+        width: calc(100% - 250px);
+        margin-left: 125px;
+    }
+        
+    #add-new {
+        padding-top: 0.375rem;
+        position: absolute;
+        width: 120px;
+        left: calc(100% - 125px);
+        border-bottom: 0px !important;
+    }
+
+    .new {
+        position: absolute;
+        width: 120px;
+        left: calc(100% - 125px);
+    }
+
+    
+    td {
+        min-width: 125px;
+        max-width: 150px;
+    }
+}
+
+@media (min-width: 768px) {
+    .total {
+        position:absolute;
+        width: 125px;
+        left: 125px;
+    }
+
+    .inner {
+        overflow-x: auto;
+        width: calc(100% - 450px);
+        margin-left: 255px;
+    }
+
+    #add-new {
+        padding-top: 0.375rem;
+        position: absolute;
+        width: 200px;
+        left: calc(100% - 205px);
+        border-bottom: 0px !important;
+    }
+    
+    .new {
+        position: absolute;
+        width: 200px;
+        left: calc(100% - 205px);
+    }
+    
+    td {
+        min-width: 150px;
+        max-width: 200px;
+    }
 }

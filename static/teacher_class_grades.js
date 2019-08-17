@@ -27,8 +27,8 @@ function newAssignment(e) {
         }
         
         //fix padding
-        element.style.paddingTop = '0.375rem';
-        element.style.paddingBottom = '0.375rem';
+        element.style.paddingTop = '0.35rem';
+        element.style.paddingBottom = '0.35rem';
     }
 }
 
@@ -42,7 +42,7 @@ function cancelSubmitNewAssignment(e) {
             case "button-row":
                 break;
             default:
-                element.innerHTML = "";
+                element.innerHTML = "&nbsp;";
         }
         //fix padding
         element.style.paddingTop = '0.75rem';
@@ -92,7 +92,7 @@ function submitNewAssignment(e) {
                 let student_id = element.id.split('_')[1];
                 let val = element.children[0].value;
                 values_json.student_points.push([parseInt(student_id), parseFloat(val)]);
-                element.innerHTML = "";
+                element.innerHTML = "&nbsp;";
                 break;
             case "pts-row":
                 let v = element.children[0].value;
@@ -167,8 +167,8 @@ function edit(e) {
                 break;
         }
         //fix padding
-        element.style.paddingTop = '0.375rem';
-        element.style.paddingBottom = '0.375rem';
+        element.style.paddingTop = '0.35rem';
+        element.style.paddingBottom = '0.35rem';
     }
 }
 
