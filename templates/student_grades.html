@@ -17,29 +17,33 @@
             <h2 id="category_name_{{ k }}" class="names">{{ grade_factor['category' ~ k ~ '_name'] }}</h2>
             <input type="hidden" id="category_value_{{ k }}" class="weights" value="{{ grade_factor['category' ~ k ~ '_weight'] }}">
             <table class="table table-striped">
-                <tr>
-                    <th>Name</th>
-                    <th>Date</th>
-                    <th>Points</th>
-                    <th>Max Points</th>
-                    <th>Percentage</th>
-                </tr>
-                {% for assignment, result in v %}
+                <thead>
                     <tr>
-                        <td id="category_{{ k }}_assignment_{{ assignment.id }}_name" class="category_{{ k }}">{{ assignment.assignment_name }}</td>
-                        <td id="category_{{ k }}_assignment_{{ assignment.id }}_date" class="category_{{ k }}">{{ assignment.assignment_date }}</td>
-                        <td id="category_{{ k }}_assignment_{{ assignment.id }}_points" class="category_{{ k }}">{% if result is defined %} {{ result.points_earned }} {% endif %}</td>
-                        <td id="category_{{ k }}_assignment_{{ assignment.id }}_total_points" class="category_{{ k }}">{{ assignment.total_points }}</td>
-                        <td id="category_{{ k }}_assignment_{{ assignment.id }}_percentage" class="category_{{ k }}"></td>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Points</th>
+                        <th>Max Points</th>
+                        <th>Percentage</th>
                     </tr>
-                {% endfor %}
-                <tr>
-                    <th>{{ grade_factor['category' ~ k ~ '_name'] }} Total</th>
-                    <th> </th>
-                    <th id="category_{{ k }}_total_points" class="category_{{ k }}"></th>
-                    <th id="category_{{ k }}_total_total_points" class="category_{{ k }}"></th>
-                    <th id="category_{{ k }}_total_percentage" class="category_{{ k }}"></th>
-                </tr>
+                </thead>
+                <tbody class="category_{{ k }}">
+                    {% for assignment, result in v %}
+                        <tr>
+                            <td id="category_{{ k }}_assignment_{{ assignment.id }}_name">{{ assignment.assignment_name }}</td>
+                            <td id="category_{{ k }}_assignment_{{ assignment.id }}_date">{{ assignment.assignment_date }}</td>
+                            <td id="category_{{ k }}_assignment_{{ assignment.id }}_points">{% if result is defined %} {{ result.points_earned }} {% endif %}</td>
+                            <td id="category_{{ k }}_assignment_{{ assignment.id }}_total_points">{{ assignment.total_points }}</td>
+                            <td id="category_{{ k }}_assignment_{{ assignment.id }}_percentage"></td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="total">
+                        <th>{{ grade_factor['category' ~ k ~ '_name'] }} Total</th>
+                        <th> </th>
+                        <th id="category_{{ k }}_total_points"></th>
+                        <th id="category_{{ k }}_total_earned"></th>
+                        <th id="category_{{ k }}_total_percentage"></th>
+                    </tr>
+                </tbody>
             </table>
         {% endfor %}
         <div class="row">
