@@ -40,10 +40,6 @@ function calculate_grades() {
     }
 
     //calculate total
-    console.log(earned);
-    console.log(total);
-    console.log(weights);
-
     let total_weight = 0;
     let grade_total = 0;
 
@@ -58,4 +54,22 @@ function calculate_grades() {
 
     console.log(grade_total);
     document.getElementById("grade-pct").innerText = grade_total;
+
+    //grade scale
+    let a = parseFloat(document.getElementById("a").value);
+    let b = parseFloat(document.getElementById("b").value);
+    let c = parseFloat(document.getElementById("c").value);
+    let d = parseFloat(document.getElementById("d").value);
+    console.log(a, b, c, d);
+    if (grade_total >= a) {
+        document.getElementById("grade-letter").innerText = "A";
+    } else if (grade_total >= b) {
+        document.getElementById("grade-letter").innerText = "B";
+    } else if (grade_total >= c) {
+        document.getElementById("grade-letter").innerText = "C";
+    } else if (grade_total >= d) {
+        document.getElementById("grade-letter").innerText = "D";
+    } else {
+        document.getElementById("grade-letter").innerText = "F";
+    }
 }

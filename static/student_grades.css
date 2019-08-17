@@ -1,19 +1,24 @@
-@media only screen and (max-width: 768px) {
-    .grades {
-        margin: 5px;
-    }
-}
-
-@media only screen and (min-width: 768px) {
-    .grades {
-        margin: 5vw;
-    }
-}
-
 .table td, th {
     text-align: right;
+}
+
+.scrollable {
+    overflow: auto;
+    width: calc(100% - 10px);
 }
 
 .table td:first-child, th:first-child {
     text-align: left;
 }​
+
+@media (max-width: 768px) {
+    .grades {
+        margin: 5px;
+    }
+}
+
+@media (min-width: 768px) {
+    .grades {
+        margin: 5vw;
+    }
+}
