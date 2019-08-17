@@ -7,14 +7,12 @@
     width: calc(100% - 10px);
 }
 
-.table td:first-child, th:first-child {
+.table td:first-child {
     text-align: left;
 }​
 
-@media (max-width: 768px) {
-    .grades {
-        margin: 5px;
-    }
+.table th:first-child {
+    text-align: left;
 }
 
 @media (min-width: 768px) {
@@ -22,3 +20,10 @@
         margin: 5vw;
     }
 }
+
+@media (max-width: 768px) {
+    .grades {
+        margin: 5px;
+    }
+}
+
