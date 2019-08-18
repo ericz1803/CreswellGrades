@@ -300,39 +300,55 @@ def create_class():
 
         cat1name = request.form['category_name1']
         cat1val = request.form['category_value1']
+        cat1drop = request.form.get('category_drop1')
         cat2name = request.form.get('category_name2')
         cat2val = request.form.get('category_value2')
+        cat2drop = request.form.get('category_drop2')
         cat3name = request.form.get('category_name3')
         cat3val = request.form.get('category_value3')
+        cat3drop = request.form.get('category_drop3')
         cat4name = request.form.get('category_name4')
         cat4val = request.form.get('category_value4')
+        cat4drop = request.form.get('category_drop4')
         cat5name = request.form.get('category_name5')
         cat5val = request.form.get('category_value5')
+        cat5drop = request.form.get('category_drop5')
         cat6name = request.form.get('category_name6')
         cat6val = request.form.get('category_value6')
+        cat6drop = request.form.get('category_drop6')
         cat7name = request.form.get('category_name7')
         cat7val = request.form.get('category_value7')
+        cat7drop = request.form.get('category_drop7')
         cat8name = request.form.get('category_name8')
         cat8val = request.form.get('category_value8')
+        cat8drop = request.form.get('category_drop8')
 
         new_class = models.Class(teacher_id=user_id, name=class_name, join_code=join_code)
         new_grade_factor = models.GradeFactor(
             category1_name = cat1name,
             category1_weight = cat1val,
+            category1_drop = cat1drop,
             category2_name = cat2name,
             category2_weight = cat2val,
+            category2_drop = cat2drop,
             category3_name = cat3name,
             category3_weight = cat3val,
+            category3_drop = cat3drop,
             category4_name = cat4name,
             category4_weight = cat4val,
+            category4_drop = cat4drop,
             category5_name = cat5name,
             category5_weight = cat5val,
+            category5_drop = cat5drop,
             category6_name = cat6name,
             category6_weight = cat6val,
+            category6_drop = cat6drop,
             category7_name = cat7name,
             category7_weight = cat7val,
+            category7_drop = cat7drop,
             category8_name = cat8name,
             category8_weight = cat8val,
+            category8_drop = cat8drop,
             class_id=new_class.id,
             class_=new_class
         )
@@ -381,20 +397,28 @@ def teacher_class_about(id):
         grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
         grade_factor.category1_name = request.form['category_name1']
         grade_factor.category1_weight = request.form['category_value1']
+        grade_factor.category1_drop = request.form['category_drop1']
         grade_factor.category2_name = request.form.get('category_name2')
         grade_factor.category2_weight = request.form.get('category_value2')
+        grade_factor.category2_drop = request.form.get('category_drop2')
         grade_factor.category3_name = request.form.get('category_name3')
         grade_factor.category3_weight = request.form.get('category_value3')
+        grade_factor.category3_drop = request.form.get('category_drop3')
         grade_factor.category4_name = request.form.get('category_name4')
         grade_factor.category4_weight = request.form.get('category_value4')
+        grade_factor.category4_drop = request.form.get('category_drop4')
         grade_factor.category5_name = request.form.get('category_name5')
         grade_factor.category5_weight = request.form.get('category_value5')
+        grade_factor.category5_drop = request.form.get('category_drop5')
         grade_factor.category6_name = request.form.get('category_name6')
         grade_factor.category6_weight = request.form.get('category_value6')
+        grade_factor.category6_drop = request.form.get('category_drop6')
         grade_factor.category7_name = request.form.get('category_name7')
         grade_factor.category7_weight = request.form.get('category_value7')
+        grade_factor.category7_drop = request.form.get('category_drop7')
         grade_factor.category8_name = request.form.get('category_name8')
         grade_factor.category8_weight = request.form.get('category_value8')
+        grade_factor.category8_drop = request.form.get('category_drop8')
         db.session.commit()
         db.session.close()
 

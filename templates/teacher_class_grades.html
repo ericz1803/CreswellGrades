@@ -51,6 +51,7 @@
                         {% for assignment in assignments %}
                             <td id="assignment_{{ assignment.id }}_name" class="assignment_{{ assignment.id }}">{{ assignment.assignment_name }}</td>
                         {% endfor %}
+                        <td>&nbsp;</td>
                         <td id="new_name" class="new"> </td>
                     </tr>
                     <tr class="button-row">
@@ -59,6 +60,7 @@
                         {% for assignment in assignments %}
                             <td class="assignment_{{ assignment.id }}"><button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button></td>
                         {% endfor %}
+                        <td>&nbsp;</td>
                         <th id="add-new" class="new"><button class="btn btn-primary" onclick="newAssignment(this)"><i class="fas fa-plus-circle"></i></button></th>
                     </tr>
                     <tr class="date-row">
@@ -67,6 +69,7 @@
                         {% for assignment in assignments %}
                             <td id="assignment_{{ assignment.id }}_date" class="assignment_{{ assignment.id }}">{{ assignment.assignment_date }}</td>
                         {% endfor %}
+                        <td>&nbsp;</td>
                         <td id="new_date" class="new"> </td>
                     </tr>
                     <tr class="category-row">
@@ -75,6 +78,7 @@
                         {% for assignment in assignments %}
                             <td id="assignment_{{ assignment.id }}_category" class="assignment_{{ assignment.id }}">{{ grade_factor['category' ~ assignment.assignment_type ~ '_name'] }}</td>
                         {% endfor %}
+                        <td>&nbsp;</td>
                         <td id="new_category" class="new"> </td>
                     </tr>
                     <tr class="pts-row">
@@ -83,6 +87,7 @@
                         {% for assignment in assignments %}
                             <td id="assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}">{{ assignment.total_points }}</td>
                         {% endfor %}
+                        <td>&nbsp;</td>
                         <td id="new_points" class="new"> </td>
                     </tr>
                 </thead>
@@ -98,6 +103,7 @@
                                 <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}"></td>
                             {% endfor %} 
                         {% endfor %}
+                        <td>&nbsp;</td>
                         <td id="student_{{ student.id }}_new_points" class="new">&nbsp;</td>
                     </tr>
                     {% endfor %}

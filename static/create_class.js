@@ -38,9 +38,13 @@ document.getElementById("add-new-category").addEventListener("click", function (
                 <label for="category_name${i}">Category ${i} Name</label>
                 <input type="text" class="form-control" id="category_name${i}" name="category_name${i}" required>
             </div>
-            <div class="col">
+            <div class="col-3">
                 <label for="category_value${i}">Category ${i} Value (%)</label>
                 <input type="number" class="form-control" id="category_value${i}" name="category_value${i}" min="1" max="100" required>
+            </div>
+            <div class="col-3">
+                <label for="category_drop${i}">Category ${i} Drop Lowest</label>
+                <input type="number" class="form-control" id="category_drop${i}" name="category_drop${i}" min="0" value=0 required>
             </div>
             `;
             document.getElementById('categories').appendChild(div);
