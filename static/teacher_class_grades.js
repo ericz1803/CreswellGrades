@@ -32,6 +32,7 @@ function newAssignment(e) {
     }
 }
 
+//cancel adding new assignment
 function cancelSubmitNewAssignment(e) {
     //TODO
     e.parentElement.innerHTML = '<button class="btn btn-primary" onclick="newAssignment(this)"><i class="fas fa-plus-circle"></i></button>';
@@ -50,6 +51,7 @@ function cancelSubmitNewAssignment(e) {
     }
 }
 
+//submits new assigment to server if valid
 function submitNewAssignment(e) {
     let valid = true;
     //check if everything is filled out
@@ -76,9 +78,10 @@ function submitNewAssignment(e) {
     }
 
     //handle submission
+    //assemble values_json and clear column
     e.parentElement.innerHTML = '<button class="btn btn-primary" onclick="newAssignment(this)"><i class="fas fa-plus-circle"></i></button>';
     let class_id = document.getElementById("class-id").value;
-    let values_json = {student_points: [], id: class_id};
+    let values_json = {student_points: {}, id: class_id};
     for (let element of elements) {
         switch (element.parentElement.className) {
             case "button-row":
@@ -86,12 +89,13 @@ function submitNewAssignment(e) {
             case "category-row":
                 let e = element.children[0];
                 values_json["category"] = parseInt(e.options[e.selectedIndex].value);
+                values_json["category-name"] = e.options[e.selectedIndex].text;
                 element.innerHTML = "";
                 break;
             case "num-row":
                 let student_id = element.id.split('_')[1];
                 let val = element.children[0].value;
-                values_json.student_points.push([parseInt(student_id), parseFloat(val)]);
+                values_json.student_points[parseInt(student_id)] = parseFloat(val);
                 element.innerHTML = "&nbsp;";
                 break;
             case "pts-row":
@@ -124,12 +128,54 @@ function submitNewAssignment(e) {
         success: function(response) {
             if (response["saved"]) {
                 console.log("Saved.");
+                console.log(response["id"]);
+                //Add to list
+                for (let element of elements) {
+                    let new_element = document.createElement("td");
+                    new_element.className = "assignment_" + response["id"];
+                    switch (element.parentElement.className) {
+                        case "name-row":
+                            new_element.innerText = values_json["name"];
+                            new_element.id = "assignment_" + response["id"] + "_name";
+                            break;
+                        case "button-row":
+                            new_element.innerHTML = '<button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button>';
+                            break;
+                        case "category-row":
+                            new_element.innerText = values_json["category-name"];
+                            new_element.id = "assignment_" + response["id"] + "_category";
+                            break;
+                        case "pts-row":
+                            new_element.innerText = values_json["points"];
+                            new_element.id = "assignment_" + response["id"] + "_points";
+                            break;
+                        case "date-row":
+                            new_element.innerText = values_json["date"];
+                            new_element.id = "assignment_" + response["id"] + "_date";
+                            break;
+                        case "num-row":
+                            let student_id = parseInt(element.id.split('_')[1]);
+                            let student_val = values_json.student_points[student_id];
+                            if (student_val) {
+                                new_element.innerText = student_val;
+                            } else {
+                                new_element.innerText = "";   
+                            }
+                            new_element.id = "student_" + student_id + "_assigment_" + response["id"] + "_points";
+                            break;
+                    }
+                    element.parentElement.insertBefore(new_element, element);
+                }
+
             } else {
                 console.log("Unable to save");
             }
         }
     });
 }
+
+
+
 
 //edit assignment
 function edit(e) {

@@ -529,7 +529,8 @@ def new_grades():
         new_assignment = models.Assignment(assignment_name=request.json['name'], assignment_type=request.json['category'], \
                          assignment_date=request.json['date'], total_points=request.json['points'], class_id=request.json['id'])
         db.session.add(new_assignment)
-        for (student_id, points) in request.json['student_points']:
+        print(request.json['student_points'])
+        for (student_id, points) in request.json['student_points'].items():
             if points is not None:
                 result = models.AssignmentResult.query.filter_by(assignment_id=new_assignment.id, student_id=student_id).all()
                 if result:
@@ -541,7 +542,11 @@ def new_grades():
         
         db.session.commit()
         db.session.close()
-        return jsonify(saved=True)
+
+        #get assignment id for adding it to list
+        new_id = models.Assignment.query.filter_by(assignment_name=request.json['name']).first_or_404().id
+        print(new_id)
+        return jsonify(saved=True, id=new_id)
     else:
         return jsonify(saved=False)
 
