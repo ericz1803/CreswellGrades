@@ -4,8 +4,20 @@ var earned = {};
 var total = {};
 //grade factor
 var weights = {};
+//lowest grades
+var drop = {};
 
 document.onload = calculate_grades();
+
+//for sorting the drop array
+function sortFunction(a, b) {
+    if (a[0] === b[0]) {
+        return 0;
+    }
+    else {
+        return (a[0] < b[0]) ? -1 : 1;
+    }
+}
 
 function calculate_grades() {
     tables = document.getElementsByTagName("tbody");
@@ -14,10 +26,13 @@ function calculate_grades() {
         let category = table.className.split('_')[1];
         //get category weight
         let weight = document.getElementById('category_value_' + category).value;
-        
+        //get number of assingments dropped
+        let drop_num = document.getElementById('category_drop_' + category).value;
+
         earned[category] = 0
         total[category] = 0
         weights[category] = parseFloat(weight);
+        drop[category] = [];
 
         //extract numbers from table
         for (let row of table.children) {
@@ -29,9 +44,25 @@ function calculate_grades() {
                 row.children[4].innerText = (points_earned / points_total * 100).toFixed(2);
                 earned[category] += points_earned;
                 total[category] += points_total;
+                
+                //drop or not
+                if (drop_num > 0) {
+                    if (drop[category].length < drop_num) {
+                        drop[category].push([points_earned / points_total, row.id]);
+                    } else if ((points_earned / points_total) < drop[category][drop[category].length - 1][0]) {
+                        drop[category].pop();
+                        drop[category].push([points_earned / points_total, row.id]);
+                        drop[category].sort(sortFunction);
+                    }
+                }
             }
         }
-
+        for (let arr of drop[category]) {
+            let row = document.getElementById(arr[1]);
+            earned[category] -= parseFloat(row.children[2].innerText);
+            total[category] -= parseFloat(row.children[3].innerText);
+            row.children[0].innerHTML += ' <span data-toggle="tooltip" data-placement="top" title="dropped" class="badge badge-warning"><i class="fas fa-asterisk"></i></span>';
+        }
         //calculate category totals
         let cat_pct = (earned[category] / total[category] * 100).toFixed(2);
         document.getElementById('category_' + category + '_total_points').innerText = earned[category];

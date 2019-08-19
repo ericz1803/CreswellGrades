@@ -16,9 +16,16 @@
     <input type="hidden" id="c" value="{{ grade_scale.c_d }}">
     <input type="hidden" id="d" value="{{ grade_scale.d_f }}">
     <div class="grades">
-        <h1>{{ class_obj.name }} Grades</h1>
+        <div class="row">
+            <div class="col-8"><h1>{{ class_obj.name }} Grade</h1></div>
+            <div class="col-4 text-right"><h1><span id="grade-letter"></span>  <span id="grade-pct"></span></h1></div>
+        </div>
+        <br>
         {% for k, v in grades.items() %}
-            <h2 id="category_name_{{ k }}" class="names">{{ grade_factor['category' ~ k ~ '_name'] }}</h2>
+            <a class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="top" title="{{ grade_factor['category' ~ k ~ '_weight'] }}% of grade, Lowest {{ grade_factor['category' ~ k ~ '_drop'] }} dropped">
+                <h2 id="category_name_{{ k }}" class="names">{{ grade_factor['category' ~ k ~ '_name'] }}</h2>
+            </a>
+            <input type="hidden" id="category_drop_{{ k }}" class="drop" value="{{ grade_factor['category' ~ k ~ '_drop'] }}">
             <input type="hidden" id="category_value_{{ k }}" class="weights" value="{{ grade_factor['category' ~ k ~ '_weight'] }}">
             <div class="scrollable">
                 <table class="table table-striped">
@@ -33,7 +40,7 @@
                     </thead>
                     <tbody class="category_{{ k }}">
                         {% for assignment, result in v %}
-                            <tr>
+                            <tr id="assignment_{{ assignment.id }}">
                                 <td id="category_{{ k }}_assignment_{{ assignment.id }}_name">{{ assignment.assignment_name }}</td>
                                 <td id="category_{{ k }}_assignment_{{ assignment.id }}_date">{{ assignment.assignment_date }}</td>
                                 <td id="category_{{ k }}_assignment_{{ assignment.id }}_points">{% if result is defined %} {{ result.points_earned }} {% endif %}</td>
@@ -52,11 +59,12 @@
                 </table>
             </div>
         {% endfor %}
-        <div class="row">
-            <div class="col-8"><h1>Final Grade</h1></div>
-            <div class="col-4 text-right"><h1><span id="grade-letter"></span>  <span id="grade-pct"></span></h1></div>
-        </div>
     </div>
 
     <script src="{{ url_for('static', filename='student_grades.js') }}"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
 {% endblock %}

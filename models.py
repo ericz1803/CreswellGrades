@@ -21,10 +21,10 @@ class Users(db.Model, UserMixin):
     password_hash = db.Column(db.LargeBinary(60), nullable=False)
     password_reset = db.Column(db.String(63))
     email = db.Column(db.String(63))
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     
-
-    assignmentresult = db.relationship('AssignmentResult', back_populates="student")
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    class_student_link = db.relationship('ClassStudentLink', backref='student', passive_deletes=True)
+    assignmentresult = db.relationship('AssignmentResult', backref='student', passive_deletes=True)
 
     def set_password(self, password):
         self.password_hash = flask_bcrypt.generate_password_hash(password)
@@ -40,6 +40,11 @@ class Class(db.Model):
 
     name = db.Column(db.String(127), nullable=False, unique=True)
     join_code = db.Column(db.String(127), nullable=False, unique=True)
+
+    grade_factor = db.relationship('GradeFactor', backref='class_', passive_deletes=True)
+    grade_scale = db.relationship('GradeScale', backref='class_', passive_deletes=True)
+    assignment = db.relationship('Assignment', backref='class_', passive_deletes=True)
+    class_student_link = db.relationship('ClassStudentLink', backref='class_', passive_deletes=True)
 
 class GradeFactor(db.Model):
     __tablename__ = 'gradefactor'
@@ -70,8 +75,7 @@ class GradeFactor(db.Model):
     category8_weight = db.Column(db.Float())
     category8_drop = db.Column(db.Integer(), default=0)
 
-    class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
-    class_ = db.relationship('Class', uselist=False)
+    class_id = db.Column(db.Integer, db.ForeignKey('class.id', ondelete='CASCADE'))
 
 class GradeScale(db.Model):
     __tablename__ = 'gradescale'
@@ -81,8 +85,7 @@ class GradeScale(db.Model):
     b_c = db.Column(db.Float(), nullable=False)
     c_d = db.Column(db.Float(), nullable=False)
     d_f = db.Column(db.Float(), nullable=False)
-    class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
-    class_ = db.relationship('Class', uselist=False)
+    class_id = db.Column(db.Integer, db.ForeignKey('class.id', ondelete='CASCADE'))
 
 class Assignment(db.Model):
     __tablename__ = 'assignment'
@@ -91,23 +94,18 @@ class Assignment(db.Model):
     assignment_type = db.Column(db.Integer, nullable=False)
     assignment_date = db.Column(db.Date(), default=datetime.date.today())
     total_points = db.Column(db.Float(), nullable=False)
-    class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
-    Class = db.relationship('Class')
-    assignment_result = db.relationship('AssignmentResult', back_populates='assignment')
+    class_id = db.Column(db.Integer, db.ForeignKey('class.id', ondelete='CASCADE'))
+    assignment_result = db.relationship('AssignmentResult', backref='assignment', passive_deletes=True)
 
 class AssignmentResult(db.Model):
     __tablename__ = 'assignmentresult'
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    student = db.relationship('Users', back_populates='assignmentresult')
-    assignment_id = db.Column(db.Integer, db.ForeignKey('assignment.id'))
-    assignment = db.relationship('Assignment', back_populates='assignment_result')
+    assignment_id = db.Column(db.Integer, db.ForeignKey('assignment.id', ondelete='CASCADE'))
     points_earned = db.Column(db.Float(), nullable=False)
     
 class ClassStudentLink(db.Model):
     __tablename__ = 'classstdentlink'
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    student = db.relationship('Users')
-    class_id = db.Column(db.Integer, db.ForeignKey('class.id'))
-    class_ = db.relationship('Class')
+    student_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
+    class_id = db.Column(db.Integer, db.ForeignKey('class.id', ondelete='CASCADE'))

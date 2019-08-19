@@ -513,7 +513,6 @@ def classes(id):
         result = next((r for a, c, r in query if a == assignment), None)
         
         grades[assignment.assignment_type].append((assignment, result))
-    print(grades)
     return render_template('student_grades.html', grades=grades, grade_factor=grade_factor, grade_scale=grade_scale, class_obj=class_obj)
 
 @app.route('/ajax/update-grades', methods=['GET', 'POST'])
@@ -529,14 +528,16 @@ def update_grades():
         assignment.assignment_date = request.json['date']
         assignment.total_points = request.json['points']
         for (student_id, points) in request.json['student_points']:
-            if points is not None:
-                result = models.AssignmentResult.query.filter_by(assignment_id=assignment.id, student_id=student_id).all()
-                if result:
-                    result[0].student_id = student_id
-                    result[0].points_earned = points
-                else:
-                    new_result = models.AssignmentResult(student_id=student_id, assignment_id=assignment.id, points_earned=points)
-                    db.session.add(new_result)
+            result = models.AssignmentResult.query.filter_by(assignment_id=assignment.id, student_id=student_id).all()
+            if result and points is not None:
+                result[0].student_id = student_id
+                result[0].points_earned = points
+            elif result and points is not None:
+                new_result = models.AssignmentResult(student_id=student_id, assignment_id=assignment.id, points_earned=points)
+                db.session.add(new_result)
+            elif result and points is None:
+                db.session.delete(result[0])
+        
         db.session.commit()
         db.session.close()
         return jsonify(saved=True)
