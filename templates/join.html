@@ -13,7 +13,7 @@
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">
-                    <input type="text" name="join_code" class="form-control" id="join">
+                    <input type="text" name="join_code" class="form-control" id="join" autofocus>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
