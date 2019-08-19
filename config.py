@@ -25,7 +25,7 @@ class Config(object):
 class ProductionConfig(Config):
     DEBUG = False
     SESSION_TYPE = 'redis'
-    SESSION_REDIS = redis.from_url(os.environ.get("REDIS_URL")) if os.environ.get("REDIS_URL") else redis.Redis(host='localhost', port=6379, db=0)
+    SESSION_REDIS = redis.from_url(os.environ.get("REDISCLOUD_URL")) if os.environ.get("REDISCLOUD_URL") else redis.Redis(host='localhost', port=6379, db=0)
 
 
 
