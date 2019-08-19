@@ -532,12 +532,12 @@ def update_grades():
             if result and points is not None:
                 result[0].student_id = student_id
                 result[0].points_earned = points
-            elif result and points is not None:
+            elif not result and points is not None:
                 new_result = models.AssignmentResult(student_id=student_id, assignment_id=assignment.id, points_earned=points)
                 db.session.add(new_result)
             elif result and points is None:
                 db.session.delete(result[0])
-        
+
         db.session.commit()
         db.session.close()
         return jsonify(saved=True)
