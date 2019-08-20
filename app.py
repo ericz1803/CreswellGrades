@@ -438,6 +438,7 @@ def teacher_class_grades(id):
         return abort(403)
         
     class_obj = models.Class.query.filter_by(id=id).first_or_404()
+    grade_scale = models.GradeScale.query.filter_by(class_id=id).first_or_404()
     grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
     
     assignments = models.Assignment.query.filter_by(class_id=id).order_by(models.Assignment.assignment_type, models.Assignment.assignment_date, models.Assignment.id).all()
@@ -461,7 +462,7 @@ def teacher_class_grades(id):
     #print(assignment_results, assignment_results_dict.items())
     return render_template('teacher_class_grades.html', students=list(students), class_obj=class_obj,
            assignments=assignments, grade_factor=grade_factor, assignment_results=assignment_results_dict,
-           secret_key=session['secret_key'])
+           grade_scale=grade_scale, secret_key=session['secret_key'])
 
 @app.route('/join', methods=['GET', 'POST'])
 @login_required

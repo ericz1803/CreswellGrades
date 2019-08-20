@@ -6,8 +6,19 @@ var total = {};
 var weights = {};
 //lowest grades
 var drop = {};
+//grade scale
+var a, b, c, d;
 
+document.onload = get_grade();
 document.onload = calculate_grades();
+
+function get_grade() {
+    //grade scale
+    a = parseFloat(document.getElementById("a").value);
+    b = parseFloat(document.getElementById("b").value);
+    c = parseFloat(document.getElementById("c").value);
+    d = parseFloat(document.getElementById("d").value);
+}
 
 //for sorting the drop array
 function sortFunction(a, b) {
@@ -38,9 +49,9 @@ function calculate_grades() {
         for (let row of table.children) {
             let points_earned = parseFloat(row.children[2].innerText);
             let points_total = parseFloat(row.children[3].innerText);
-
+            
             //only add to grade calculation if student grade exists
-            if (points_earned) {
+            if (points_earned || points_earned == 0) {
                 row.children[4].innerText = (points_earned / points_total * 100).toFixed(2);
                 earned[category] += points_earned;
                 total[category] += points_total;
@@ -86,12 +97,7 @@ function calculate_grades() {
     console.log(grade_total);
     document.getElementById("grade-pct").innerText = grade_total;
 
-    //grade scale
-    let a = parseFloat(document.getElementById("a").value);
-    let b = parseFloat(document.getElementById("b").value);
-    let c = parseFloat(document.getElementById("c").value);
-    let d = parseFloat(document.getElementById("d").value);
-    console.log(a, b, c, d);
+    
     if (grade_total >= a) {
         document.getElementById("grade-letter").innerText = "A";
     } else if (grade_total >= b) {

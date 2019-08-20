@@ -1,3 +1,33 @@
+//grade factor
+var weights = {};
+//lowest grades
+var drop = {};
+var a, b, c, d;
+
+document.onload = get_values();
+document.onload = calculate_grades();
+
+//get weights, drop, and grade scale
+function get_values() {
+    //grade scale
+    a = parseFloat(document.getElementById("a").value);
+    b = parseFloat(document.getElementById("b").value);
+    c = parseFloat(document.getElementById("c").value);
+    d = parseFloat(document.getElementById("d").value);
+
+    //weights
+    let w = document.getElementById('weights');
+    for (let i = 0; i < w.children.length; i++) {
+        weights[i + 1] = parseFloat(w.children[i].value);
+    }
+
+    //drop
+    let dr = document.getElementById('drop');
+    for (let i = 0; i < w.children.length; i++) {
+        drop[i + 1] = parseInt(dr.children[i].value);
+    }
+}
+
 var currently_editing = [];
 var assignment_queue = [];
 
@@ -113,7 +143,6 @@ function submitNewAssignment(e) {
                 break;
         }
     }
-    console.log(values_json);
 
     //send json to server
     let secret_key = document.getElementById('secret-key').value;
@@ -128,7 +157,6 @@ function submitNewAssignment(e) {
         success: function(response) {
             if (response["saved"]) {
                 console.log("Saved.");
-                console.log(response["id"]);
                 //Add to list
                 for (let element of elements) {
                     let new_element = document.createElement("td");
@@ -142,7 +170,7 @@ function submitNewAssignment(e) {
                             new_element.innerHTML = '<button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button>';
                             break;
                         case "category-row":
-                            new_element.innerText = values_json["category-name"];
+                            new_element.innerHTML = `<input type="hidden" id="assignment_${response["id"]}_category_num" value="${values_json["category-name"]}"></input>` + values_json["category-name"];
                             new_element.id = "assignment_" + response["id"] + "_category";
                             break;
                         case "pts-row":
@@ -164,14 +192,17 @@ function submitNewAssignment(e) {
                             new_element.id = "student_" + student_id + "_assigment_" + response["id"] + "_points";
                             break;
                     }
-                    element.parentElement.insertBefore(new_element, element);
+                    element.parentElement.insertBefore(new_element, element.previousElementSibling);
                 }
 
+                //wait for DOM to update before calling calclulate_grades()
+                setTimeout(calculate_grades(), 0);
             } else {
                 console.log("Unable to save");
             }
         }
     });
+
 }
 
 
@@ -244,7 +275,7 @@ function doneEdit(e) {
             case "category-row":
                 let e = element.children[0];
                 values_json["category"] = parseInt(e.options[e.selectedIndex].value);
-                element.innerHTML = e.options[e.selectedIndex].text;
+                element.innerHTML = `<input type="hidden" id="${element.className}_category_num" value="${e.options[e.selectedIndex].value}"></input>` + e.options[e.selectedIndex].text;
                 break;
             case "num-row":
                 let student_id = element.id.split('_')[1];
@@ -284,9 +315,128 @@ function doneEdit(e) {
         success: function(response) {
             if (response["saved"]) {
                 console.log("Saved.");
+                calculate_grades();
             } else {
                 console.log("Unable to save");
             }
         }
     });
+
+
+}
+
+
+//for sorting the drop array
+function sortFunction(a, b) {
+    if (a[0] === b[0]) {
+        return 0;
+    }
+    else {
+        return (a[0] < b[0]) ? -1 : 1;
+    }
+}
+
+function calculate_grades() {
+    console.log("called");
+    let rows = document.getElementsByClassName("num-row");
+    for (let row of rows) {
+        //points earned
+        let earned = {
+            1:0,
+            2:0,
+            3:0,
+            4:0,
+            5:0,
+            6:0,
+            7:0,
+            8:0,
+        };
+        //points total
+        let total = {
+            1:0,
+            2:0,
+            3:0,
+            4:0,
+            5:0,
+            6:0,
+            7:0,
+            8:0,
+        };
+
+        let cur_drop = {
+            1:[],
+            2:[],
+            3:[],
+            4:[],
+            5:[],
+            6:[],
+            7:[],
+            8:[],
+        };
+        
+        let grades = row.children;
+        console.log(grades.length);
+        grades = Array.prototype.slice.call(grades, 2, grades.length - 2);
+        for (let grade of grades) {
+            if (grade.innerText) {
+                let assignment_id = parseInt(grade.className.split('_')[1]);
+                let category_num = parseInt(document.getElementById("assignment_" + assignment_id + "_category_num").value);
+                let assignment_total = parseFloat(document.getElementById("assignment_" + assignment_id + "_points").innerText);
+                let points_earned = parseFloat(grade.innerText);
+
+                earned[category_num] += points_earned;
+                total[category_num] += assignment_total;
+                
+                //drop or not
+                if (drop[category_num] > 0) {
+                    //check if cur_drop is at capacity
+                    if (cur_drop[category_num].length < drop[category_num]) {
+                        cur_drop[category_num].push([points_earned / assignment_total, points_earned, assignment_total]);
+                    } else if ((points_earned / assignment_total) < cur_drop[category_num][cur_drop[category_num].length - 1][0]) {
+                        cur_drop[category_num].pop();
+                        cur_drop[category_num].push([points_earned / assignment_total, points_earned, assignment_total]);
+                        cur_drop[category_num].sort(sortFunction);
+                    }
+                }
+            }
+        }
+
+        //calculate total
+        let total_weight = 0;
+        let grade_total = 0;
+
+        for (let i = 1; i <= 8; i++) {
+            //drop from category i
+            for (let val of cur_drop[i]) {
+                earned[i] -= val[1];
+                total[i] -= val[2];
+            }
+
+            //if category total is not 0, then add category to grade total
+            if (total[i] > Number.EPSILON) {
+                grade_total += earned[i] / total[i] * weights[i];
+                total_weight += weights[i];
+            }
+        }
+
+
+        grade_total = (grade_total / total_weight * 100).toFixed(2);
+        
+        //set grade letter
+        let grade_letter_element = row.children[1].children[0];
+        if (grade_total >= a) {
+            grade_letter_element.innerText = "A";
+        } else if (grade_total >= b) {
+            grade_letter_element.innerText = "B";
+        } else if (grade_total >= c) {
+            grade_letter_element.innerText = "C";
+        } else if (grade_total >= d) {
+            grade_letter_element.innerText = "D";
+        } else {
+            grade_letter_element.innerText = "F";
+        }
+
+        //set grade total
+        row.children[1].children[1].innerText = grade_total;
+    }
 }

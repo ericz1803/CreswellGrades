@@ -26,16 +26,36 @@
     {{ custom_navbar(left = left, right = right) }}
     
 
-    
+    <input type="hidden" id="a" value="{{ grade_scale.a_b }}">
+    <input type="hidden" id="b" value="{{ grade_scale.b_c }}">
+    <input type="hidden" id="c" value="{{ grade_scale.c_d }}">
+    <input type="hidden" id="d" value="{{ grade_scale.d_f }}">
 
     <input type="hidden" id="secret-key" value="{{ secret_key }}">
     <input type="hidden" id="class-id" value="{{ class_obj.id }}">
+    <div id="weights">
+        {% for i in range(1, 9) %}
+            {% if grade_factor['category' ~ i ~ '_name'] is not none %}
+                <input type="hidden" id="category_{{ i }}_weight" value="{{ grade_factor['category' ~ i ~ '_weight'] }}"> 
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div id="drop">
+        {% for i in range(1, 9) %}
+            {% if grade_factor['category' ~ i ~ '_name'] is not none %}
+                <input type="hidden" id="category_{{ i }}_drop" value="{{ grade_factor['category' ~ i ~ '_drop'] }}"> 
+            {% endif %}
+        {% endfor %}
+    </div>
+
     <!-- grade factor dropdown -->
     <div id="category-selector" style="display: none;">
         <select class="custom-select">
             {% for i in range(1, 9) %}
                 {% if grade_factor['category' ~ i ~ '_name'] is not none %}
-                    <option value="{{ i }}">{{ grade_factor['category' ~ i ~ '_name'] }}</option>
+                    <option value="{{ i }}">
+                        {{ grade_factor['category' ~ i ~ '_name'] }}
+                    </option>
                 {% endif %}
             {% endfor %}
         </select>
@@ -76,7 +96,7 @@
                         <th class="first">Category</th>
                         <td class="total"></td>
                         {% for assignment in assignments %}
-                            <td id="assignment_{{ assignment.id }}_category" class="assignment_{{ assignment.id }}">{{ grade_factor['category' ~ assignment.assignment_type ~ '_name'] }}</td>
+                            <td id="assignment_{{ assignment.id }}_category" class="assignment_{{ assignment.id }}"><input type="hidden" id="assignment_{{ assignment.id }}_category_num" value="{{ assignment.assignment_type }}">{{ grade_factor['category' ~ assignment.assignment_type ~ '_name'] }}</td>
                         {% endfor %}
                         <td>&nbsp;</td>
                         <td id="new_category" class="new"> </td>
@@ -95,7 +115,7 @@
                     {% for student in students %}
                     <tr class="num-row">
                         <th class="first">{{ student.first_name }} {{ student.last_name }}</th>
-                        <td class="total">&nbsp;</td>
+                        <td class="total"><span id="student_{{ student.id }}_letter"></span>&nbsp;<span id="student_{{ student.id }}_grade"></span></td>
                         {% for assignment in assignments %}
                             {% for assignment_result in assignment_results[student.id] if assignment_result.assignment_id == assignment.id%}
                                 <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}">{{ assignment_result.points_earned }}</td>
