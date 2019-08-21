@@ -1,0 +1,21 @@
+language: python
+python:
+  - "3.6"
+services:
+  - postgresql
+addons:
+  postgresql: "9.6"
+env:
+  global:
+    - APP_SETTINGS=config.DevelopmentConfig
+    - DATABASE_URL="postgres://postgres@127.0.0.1:5432/gradestest"
+    - PGPORT=5433
+before_script:
+  - psql -c 'CREATE DATABASE gradestest' -U postgres
+install:
+  - pip install pipenv
+  - pipenv install
+  - pipenv shell
+script:
+  - cd tests
+  - python test.py
