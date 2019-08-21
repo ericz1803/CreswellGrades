@@ -9,7 +9,7 @@ env:
   global:
     - APP_SETTINGS=config.DevelopmentConfig
     - DATABASE_URL="postgres://postgres@127.0.0.1:5432/gradestest"
-    - PGPORT=5433
+    - PGPORT=5432
 before_script:
   - psql -c 'CREATE DATABASE gradestest' -U postgres
 install:
