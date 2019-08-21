@@ -134,7 +134,7 @@ class TestAdminInterfacePrivileges(unittest.TestCase):
                 session['user_id'] = 1
             resp = c.get('/admin')
             self.assertIn('http://localhost/admin/', resp.headers['location'])
-            self.assertEqual(resp.status_code, 301)
+            self.assertTrue(resp.status_code == 301 or resp.status_code == 308)
 
     def testIsNotAdminHomepage(self):
         with app.test_client() as c:
