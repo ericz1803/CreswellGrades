@@ -47,6 +47,11 @@ function calculate_grades() {
 
         //extract numbers from table
         for (let row of table.children) {
+            //remove existing badges
+            if (row.children[0].children.length != 0) {
+                row.children[0].removeChild(row.children[0].children[0]);
+            }
+
             let points_earned = parseFloat(row.children[2].innerText);
             let points_total = parseFloat(row.children[3].innerText);
             
@@ -109,4 +114,21 @@ function calculate_grades() {
     } else {
         document.getElementById("grade-letter").innerText = "F";
     }
+}
+
+function test(e) {
+    e.parentElement.innerHTML = '<button class="btn btn-primary" onclick="doneTest(this)">Recalculate</button>';
+    let points = document.querySelectorAll(".points");
+    for (let point of points) {
+        point.innerHTML = `<input class="form-control input-sm" type="number" value="${point.innerText}" step=0.1>`;
+    }
+}
+
+function doneTest(e) {
+    e.parentElement.innerHTML = '<button class="btn btn-primary" onclick="test(this)">What If?</button>';
+    let points = document.querySelectorAll(".points");
+    for (let point of points) {
+        point.innerText = point.children[0].value;
+    }
+    calculate_grades();
 }

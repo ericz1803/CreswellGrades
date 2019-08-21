@@ -43,9 +43,9 @@
                             <tr id="assignment_{{ assignment.id }}">
                                 <td id="category_{{ k }}_assignment_{{ assignment.id }}_name">{{ assignment.assignment_name }}</td>
                                 <td id="category_{{ k }}_assignment_{{ assignment.id }}_date">{{ assignment.assignment_date }}</td>
-                                <td id="category_{{ k }}_assignment_{{ assignment.id }}_points">{% if result is defined %} {{ result.points_earned }} {% endif %}</td>
+                                <td id="category_{{ k }}_assignment_{{ assignment.id }}_points" class="points">{% if result is defined %} {{ result.points_earned }} {% endif %}</td>
                                 <td id="category_{{ k }}_assignment_{{ assignment.id }}_total_points">{{ assignment.total_points }}</td>
-                                <td id="category_{{ k }}_assignment_{{ assignment.id }}_percentage"></td>
+                                <td id="category_{{ k }}_assignment_{{ assignment.id }}_percentage">&nbsp;</td>
                             </tr>
                         {% endfor %}
                         <tr class="total">
@@ -59,6 +59,9 @@
                 </table>
             </div>
         {% endfor %}
+        <div style="text-align: right;">
+            <button class="btn btn-primary" onclick="test(this)">What If?</button>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='student_grades.js') }}"></script>
