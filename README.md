@@ -1,5 +1,16 @@
 # [CreswellGrades](https://creswell-grades.herokuapp.com/)
 
+[![Build Status](https://travis-ci.com/ericz1803/CreswellGrades.svg?token=kgRjisW2saVwCyBzYyN5&branch=master)](https://travis-ci.com/ericz1803/CreswellGrades)
+
+## Features
+
+- Teacher gradebook
+  - Up to 8 grade categories
+  - Lowest grade dropping
+- Student grade viewer
+  - Breakdown by category
+  - Shows dropped grades
+
 ## Install
  
 ### Install Postgres  

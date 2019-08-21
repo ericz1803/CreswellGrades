@@ -1,4 +1,5 @@
 """ Main Test file, runs all tests """
+import sys
 import unittest
 
 #Include individual tests
@@ -18,4 +19,5 @@ def suite():
 if __name__ == '__main__':
     test_suite = suite()
     runner = unittest.TextTestRunner()
-    runner.run(test_suite)
+    ret = not runner.run(suite).wasSuccessful()
+    sys.exit(ret)
