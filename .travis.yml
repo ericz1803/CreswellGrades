@@ -13,8 +13,7 @@ env:
 before_script:
   - psql -c 'CREATE DATABASE gradestest' -U postgres
 install:
-  - pip install pipenv
-  - pipenv install
+  - pip install -r reqirements.txt
 script:
   - cd tests
   - python test.py
