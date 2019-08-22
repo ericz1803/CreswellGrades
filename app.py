@@ -285,6 +285,35 @@ def home(id):
             except:
                 return render_template('student_home.html')
 
+@app.route('/about', methods=['GET', 'POST'])
+@login_required
+def about():
+    if request.method == 'POST':
+        user = models.Users.query.filter_by(id=session['user_id']).first_or_404()
+        email = request.form.get('email')
+        password = request.form.get('password')
+        password_confirm = request.form.get('passwordconfirm')
+
+        if email:
+            try:
+                user.email = email
+                flash('Updated email.', 'success')
+            except:
+                flash('Unable to update email.', 'error')
+        if password:
+            if password==password_confirm:
+                user.set_password(password)
+                flash('Updated password.', 'success')
+            else:
+                print(password, password_confirm)
+                flash('Unable to update password', 'error')
+        db.session.commit()
+        return render_template('about.html', user=user)
+    else:
+        user = models.Users.query.filter_by(id=session['user_id']).first_or_404()
+        return render_template('about.html', user=user)
+
+
 @app.route('/create-class', methods=['GET', 'POST'])
 @login_required
 @teacher_required

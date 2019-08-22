@@ -17,13 +17,7 @@
     <li class="nav-item">
         <a class="nav-link" href="/class/grades/' ~ class_obj.id  ~ '"><h5>Grades</h5></a>
     </li>' %}
-
-    {% set right = 
-    '<li class="nav-item">
-        <a class="nav-link" href="/logout"><h5>Logout</h5></a>
-    </li>' %}
-
-    {{ custom_navbar(left = left, right = right) }}
+    {{ custom_navbar(left = left) }}
 
     <div class="text-center">
         <div class="row justify-content-center text-center" id="box">

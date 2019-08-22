@@ -16,14 +16,9 @@
     </li>
     <li class="nav-item active">
         <a class="nav-link" href="/class/grades/' ~ class_obj.id  ~ '"><h5>Grades</h5></a>
-    </li>' %}
-
-    {% set right = 
-    '<li class="nav-item">
-        <a class="nav-link" href="/logout"><h5>Logout</h5></a>
-    </li>' %}
-
-    {{ custom_navbar(left = left, right = right) }}
+    </li>' 
+    %}
+    {{ custom_navbar(left = left) }}
     
 
     <input type="hidden" id="a" value="{{ grade_scale.a_b }}">
