@@ -26,8 +26,9 @@ class ProductionConfig(Config):
     DEBUG = False
     SESSION_TYPE = 'redis'
     SESSION_REDIS = redis.from_url(os.environ.get("REDISCLOUD_URL")) if os.environ.get("REDISCLOUD_URL") else redis.Redis(host='localhost', port=6379, db=0)
-
-
+    SCOUT_MONITOR = True
+    SCOUT_KEY = os.environ.get("SCOUT_KEY")
+    SCOUT_NAME = "Creswell Grades"
 
 class DevelopmentConfig(Config):
     TEMPLATES_AUTO_RELOAD = True

@@ -5,6 +5,7 @@ from flask_admin.form import rules
 from flask_admin.menu import MenuLink
 from flask_sqlalchemy import SQLAlchemy
 import os
+import sys
 from functools import wraps
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from wtforms import PasswordField
@@ -32,6 +33,15 @@ mail = Mail(app)
 if not app.config['DEBUG']:
     sess = Session()
     sess.init_app(app)
+
+#scout apm
+if sys.platform.startswith("linux"):
+    from scout_apm.flask import ScoutApm
+    ScoutApm(app)
+    from scout_apm.flask.sqlalchemy import instrument_sqlalchemy
+    instrument_sqlalchemy(db)
+
+
 
 #admin interface
 class MyAdminIndexView(AdminIndexView):
