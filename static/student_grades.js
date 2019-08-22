@@ -1,7 +1,3 @@
-//points earned
-var earned = {};
-//points total
-var total = {};
 //grade factor
 var weights = {};
 //lowest grades
@@ -31,6 +27,10 @@ function sortFunction(a, b) {
 }
 
 function calculate_grades() {
+    //points earned
+    let earned = {};
+    //points total
+    let total = {};
     tables = document.getElementsByTagName("tbody");
     for (let table of tables) {
         //get category num
@@ -40,13 +40,18 @@ function calculate_grades() {
         //get number of assingments dropped
         let drop_num = document.getElementById('category_drop_' + category).value;
 
-        earned[category] = 0
-        total[category] = 0
+        earned[category] = 0;
+        total[category] = 0;
         weights[category] = parseFloat(weight);
         drop[category] = [];
 
+        console.log(earned, total, drop);
+
         //extract numbers from table
         for (let row of table.children) {
+            if (row.className == "total") {
+                continue;
+            }
             //remove existing badges
             if (row.children[0].children.length != 0) {
                 row.children[0].removeChild(row.children[0].children[0]);
@@ -60,7 +65,7 @@ function calculate_grades() {
                 row.children[4].innerText = (points_earned / points_total * 100).toFixed(2);
                 earned[category] += points_earned;
                 total[category] += points_total;
-                
+
                 //drop or not
                 if (drop_num > 0) {
                     if (drop[category].length < drop_num) {
@@ -130,5 +135,5 @@ function doneTest(e) {
     for (let point of points) {
         point.innerText = point.children[0].value;
     }
-    calculate_grades();
+    setTimeout(calculate_grades(), 0);
 }
