@@ -10,6 +10,7 @@
 - Student grade viewer
   - Breakdown by category
   - Shows dropped grades
+  - What if grades
 
 ## Install
  
