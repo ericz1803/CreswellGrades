@@ -2,22 +2,22 @@
 {% from 'templates.jinja' import basicnav %}
 
 {% block title %}
-    Join Class
+  Join Class
 {% endblock %}
 
 {% block body %}
-    {{ basicnav | safe }}
-    <div class="row justify-content-center text-center" id="box">
-        <div class="col-12 col-md-8 col-lg-6">
-            <h1 class="h1 mb-3 font-weight-normal">Join Code</h1>
-            <form method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <div class="form-group">
-                    <input type="text" name="join_code" class="form-control" id="join" autofocus>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+  {{ basicnav | safe }}
+  <div class="row justify-content-center text-center" id="box">
+    <div class="col-12 col-md-8 col-lg-6">
+      <h1 class="h1 mb-3 font-weight-normal">Join Code</h1>
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="form-group">
+          <input type="text" name="join_code" class="form-control" id="join" autofocus>
         </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
     </div>
+  </div>
 {% endblock %}
 

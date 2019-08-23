@@ -2,91 +2,91 @@
 {% from 'templates.jinja' import basicnav %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='create_class.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='create_class.css') }}">
 {% endblock %}
 
 {% block title %}
-    Create Class
+  Create Class
 {% endblock %}
 
 {% block body %}
-    {{ basicnav | safe }}
-    <div class="text-center">
-        <div class="row justify-content-center text-center" id="box-lg">
-            <div class="col-12 col-md-8 col-lg-6">
-                <h1 class="h1 mb-3 font-weight-normal">Create Class</h1>
-                <form method="POST">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <h3 class="section-header">Class</h3>
-                    <div class="form-row">
-                        <div class="col">
-                            <label for="class_name">Class Name</label>
-                            <input type="text" class="form-control" id="class_name" name="class_name" required>
-                        </div>
-                        <div class="col-auto">
-                            <label for="join_code">Join Code</label>
-                            <input type="text" class="form-control" id="join_code" name="join_code" required>
-                        </div>
-                        <div class="col-auto align-self-end">
-                            <button type="button" class="btn btn-primary input-group-btn" id="reroll"><i class="fas fa-redo"></i></button>                            
-                        </div>
-                    </div>
-    
-                    <h3 class="section-header">Grade Scale</h3>
-                    <div class="form-group row">
-                        <label for="a" class="col-sm-2 col-form-label"><h5><strong>A</strong> >=</h5></label>
-                        <div class="col-sm-10">
-                            <input type="number" min="0"  max="100" name="a" id="a" class="form-control" value="85" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="b" class="col-sm-2 col-form-label"><h5><strong>B</strong> >=</h5></label>
-                        <div class="col-sm-10">
-                            <input type="number" min="0"  max="100" name="b" id="b" class="form-control" value="70" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="c" class="col-sm-2 col-form-label"><h5><strong>C</strong> >=</h5></label>
-                        <div class="col-sm-10">
-                            <input type="number" min="0"  max="100" name="c" id="c" class="form-control" value="60" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="d" class="col-sm-2 col-form-label"><h5><strong>D</strong> >=</h5></label>
-                        <div class="col-sm-10">
-                            <input type="number" min="0"  max="100" name="d" id="d" class="form-control" value="50" required>
-                        </div>
-                    </div>
-    
-                    <h2>Grade Factor</h2>
-                    <div id="categories">
-                        <div class="form-group row" id="category1">
-                            <div class="col">
-                                <label for="category_name1">Category 1 Name</label>
-                                <input type="text" class="form-control" id="category_name1" name="category_name1" required>
-                            </div>
-                            <div class="col-3">
-                                <label for="category_value1">Category 1 Value (%)</label>
-                                <input type="number" class="form-control" id="category_value1" name="category_value1" min="1" max="100" required>
-                            </div>
-                            <div class="col-3">
-                                <label for="category_drop1">Category 1 Drop Lowest</label>
-                                <input type="number" class="form-control" id="category_drop1" name="category_drop1" min="0" value=0 required>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <button type="button" class="btn btn-primary" id="add-new-category"><i class="fas fa-plus-circle"></i> New Category</button>
-                        <button type="button" class="btn btn-primary" id="remove-category"><i class="fas fa-minus-circle"></i> Remove Category</button>
-                    </div>
-                    
-                    <div id="submit-button">
-                        <button type="submit" class="btn btn-primary">Create</button>
-                    </div>
-                </form>
+  {{ basicnav | safe }}
+  <div class="text-center">
+    <div class="row justify-content-center text-center" id="box-lg">
+      <div class="col-12 col-md-8 col-lg-6">
+        <h1 class="h1 mb-3 font-weight-normal">Create Class</h1>
+        <form method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          <h3 class="section-header">Class</h3>
+          <div class="form-row">
+            <div class="col">
+              <label for="class_name">Class Name</label>
+              <input type="text" class="form-control" id="class_name" name="class_name" required>
             </div>
-        </div>
+            <div class="col-auto">
+              <label for="join_code">Join Code</label>
+              <input type="text" class="form-control" id="join_code" name="join_code" required>
+            </div>
+            <div class="col-auto align-self-end">
+              <button type="button" class="btn btn-primary input-group-btn" id="reroll"><i class="fas fa-redo"></i></button>
+            </div>
+          </div>
+  
+          <h3 class="section-header">Grade Scale</h3>
+          <div class="form-group row">
+            <label for="a" class="col-sm-2 col-form-label"><h5><strong>A</strong> >=</h5></label>
+            <div class="col-sm-10">
+              <input type="number" min="0"  max="100" name="a" id="a" class="form-control" value="85" required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="b" class="col-sm-2 col-form-label"><h5><strong>B</strong> >=</h5></label>
+            <div class="col-sm-10">
+              <input type="number" min="0"  max="100" name="b" id="b" class="form-control" value="70" required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="c" class="col-sm-2 col-form-label"><h5><strong>C</strong> >=</h5></label>
+            <div class="col-sm-10">
+              <input type="number" min="0"  max="100" name="c" id="c" class="form-control" value="60" required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="d" class="col-sm-2 col-form-label"><h5><strong>D</strong> >=</h5></label>
+            <div class="col-sm-10">
+              <input type="number" min="0"  max="100" name="d" id="d" class="form-control" value="50" required>
+            </div>
+          </div>
+  
+          <h2>Grade Factor</h2>
+          <div id="categories">
+            <div class="form-group row" id="category1">
+              <div class="col">
+                <label for="category_name1">Category 1 Name</label>
+                <input type="text" class="form-control" id="category_name1" name="category_name1" required>
+              </div>
+              <div class="col-3">
+                <label for="category_value1">Category 1 Value (%)</label>
+                <input type="number" class="form-control" id="category_value1" name="category_value1" min="1" max="100" required>
+              </div>
+              <div class="col-3">
+                <label for="category_drop1">Category 1 Drop Lowest</label>
+                <input type="number" class="form-control" id="category_drop1" name="category_drop1" min="0" value=0 required>
+              </div>
+            </div>
+          </div>
+          <div>
+            <button type="button" class="btn btn-primary" id="add-new-category"><i class="fas fa-plus-circle"></i> New Category</button>
+            <button type="button" class="btn btn-primary" id="remove-category"><i class="fas fa-minus-circle"></i> Remove Category</button>
+          </div>
+          
+          <div id="submit-button">
+            <button type="submit" class="btn btn-primary">Create</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-    <script src="{{ url_for('static', filename='create_class.js') }}"></script>
+  <script src="{{ url_for('static', filename='create_class.js') }}"></script>
 {% endblock %}
 

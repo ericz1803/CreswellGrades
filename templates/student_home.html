@@ -2,32 +2,32 @@
 {% from 'templates.jinja' import basicnav %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 {% endblock %}
 
 {% block title %}
-    Home
+  Home
 {% endblock %}
 
 {% block body %}
-    {{ basicnav | safe }}
-    <div class="row justify-content-center text-center" id="box">
-        <div class="col-12 col-md-8 col-lg-6">
-            <div class="card">
-                <div class="card-body">
-                    <h1 class="card-title">Classes</h1>
-                </div>
-
-                <ul class="list-group list-group-flush">
-                    {% for class in classes %}
-                        <a href="/classes/{{class.id}}"><li class="list-group-item"><h5>{{class.name}}</h5></li></a>
-                    {% endfor %}
-                    <a href='/join'><li class="list-group-item"><h5 class="card-title"><i class="fas fa-plus-circle"></i> Join Class</h5></li></a>
-                </ul>
-            </div>
+  {{ basicnav | safe }}
+  <div class="row justify-content-center text-center" id="box">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="card-title">Classes</h1>
         </div>
+
+        <ul class="list-group list-group-flush">
+          {% for class in classes %}
+            <a href="/classes/{{class.id}}"><li class="list-group-item"><h5>{{class.name}}</h5></li></a>
+          {% endfor %}
+          <a href='/join'><li class="list-group-item"><h5 class="card-title"><i class="fas fa-plus-circle"></i> Join Class</h5></li></a>
+        </ul>
+      </div>
     </div>
-    <div class="row justify-content-center" id="link">
-    </div>
+  </div>
+  <div class="row justify-content-center" id="link">
+  </div>
 
 {% endblock %}

@@ -2,73 +2,73 @@
 {% from 'templates.jinja' import basicnav %}
 
 {% block title %}
-    About Me
+  About Me
 {% endblock %}
 
 {% block body %}
-    {{ basicnav | safe }}
-    <div class="row justify-content-center" id="box">
-        <div class="col-12 col-md-8 col-lg-6">
-            <h1 class="h1 mb-3 font-weight-normal text-center">About Me</h1>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        {% if category == 'success' %}
-                        <div class="alert alert-success alert-dismissible fade show">
-                            {{ message }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        {% else %}
-                            <div class="alert alert-danger alert-dismissible fade show">
-                                {{ message }}
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-            <form method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <div class="form-group row">
-                    <label for="staticUsername" class="col-sm-3 col-form-label">Username</label>
-                    <div class="col-sm-9">
-                      <input type="text" readonly class="form-control-plaintext" id="staticUsername" value="{{ user.username }}">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="name">Name</label>
-                    <div class="col-sm-9">
-                        <input type="text" id="name" class="form-control-plaintext" placeholder="First Name" value="{{ user.first_name }} {{ user.last_name }}">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="email" class="col-sm-3 col-form-label">Email</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" name="email" id="email" placeholder="name@example.com" value="{% if user.email %}{{ user.email }}{% endif %}">
-                    </div>
-                </div>
-                <div class="form-group row text-left">
-                    <label for="password" class="col-sm-3 col-form-label">New Password</label>
-                    <div class="col-sm-9">
-                        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="New Password">
-                        <div class="invalid-feedback">Passwords must be at least 8 characters long.</div>
-                    </div>
-                </div>
-                <div class="form-group row text-left">
-                    <label for="inputConfirmPassword" class="col-sm-3 col-form-label">Confirm New Password</label>
-                    <div class="col-sm-9">
-                        <input type="password" name="passwordconfirm" id="inputConfirmPassword" class="form-control" placeholder="Confirm New Password">
-                        <div class="invalid-feedback">Passwords do not match.</div>
-                    </div>
-                </div>
-                <button id="submitButton" class="btn btn-lg btn-primary btn-block" type="submit" disabled>Update</button>
-            </form>
+  {{ basicnav | safe }}
+  <div class="row justify-content-center" id="box">
+    <div class="col-12 col-md-8 col-lg-6">
+      <h1 class="h1 mb-3 font-weight-normal text-center">About Me</h1>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% if category == 'success' %}
+            <div class="alert alert-success alert-dismissible fade show">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            {% else %}
+              <div class="alert alert-danger alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="form-group row">
+          <label for="staticUsername" class="col-sm-3 col-form-label">Username</label>
+          <div class="col-sm-9">
+          <input type="text" readonly class="form-control-plaintext" id="staticUsername" value="{{ user.username }}">
+          </div>
         </div>
+        <div class="form-group row">
+          <label class="col-sm-3 col-form-label" for="name">Name</label>
+          <div class="col-sm-9">
+            <input type="text" id="name" class="form-control-plaintext" placeholder="First Name" value="{{ user.first_name }} {{ user.last_name }}">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="email" class="col-sm-3 col-form-label">Email</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="email" id="email" placeholder="name@example.com" value="{% if user.email %}{{ user.email }}{% endif %}">
+          </div>
+        </div>
+        <div class="form-group row text-left">
+          <label for="password" class="col-sm-3 col-form-label">New Password</label>
+          <div class="col-sm-9">
+            <input type="password" name="password" id="inputPassword" class="form-control" placeholder="New Password">
+            <div class="invalid-feedback">Passwords must be at least 8 characters long.</div>
+          </div>
+        </div>
+        <div class="form-group row text-left">
+          <label for="inputConfirmPassword" class="col-sm-3 col-form-label">Confirm New Password</label>
+          <div class="col-sm-9">
+            <input type="password" name="passwordconfirm" id="inputConfirmPassword" class="form-control" placeholder="Confirm New Password">
+            <div class="invalid-feedback">Passwords do not match.</div>
+          </div>
+        </div>
+        <button id="submitButton" class="btn btn-lg btn-primary btn-block" type="submit" disabled>Update</button>
+      </form>
     </div>
-
-    <script src="{{ url_for('static', filename='about.js') }}"></script>
+  </div>
+    
+  <script src="{{ url_for('static', filename='about.js') }}"></script>
 {% endblock %}

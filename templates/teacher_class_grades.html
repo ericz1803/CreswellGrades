@@ -2,142 +2,142 @@
 {% from "templates.jinja" import custom_navbar %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='teacher_class_grades.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='teacher_class_grades.css') }}">
 {% endblock %}
 
 {% block title %}
-    {{class_obj.name}} Grades
+  {{class_obj.name}} Grades
 {% endblock %}
 
 {% block body %}
-    {% set left = 
-    '<li class="nav-item">
-        <a class="nav-link" href="/class/about/' ~ class_obj.id  ~ '"><h5>About</h5></a>
-    </li>
-    <li class="nav-item active">
-        <a class="nav-link" href="/class/grades/' ~ class_obj.id  ~ '"><h5>Grades</h5></a>
-    </li>' 
-    %}
-    {{ custom_navbar(left = left) }}
-    
+  {% set left = 
+  '<li class="nav-item">
+    <a class="nav-link" href="/class/about/' ~ class_obj.id  ~ '"><h5>About</h5></a>
+  </li>
+  <li class="nav-item active">
+    <a class="nav-link" href="/class/grades/' ~ class_obj.id  ~ '"><h5>Grades</h5></a>
+  </li>' 
+  %}
+  {{ custom_navbar(left = left) }}
+  
 
-    <input type="hidden" id="a" value="{{ grade_scale.a_b }}">
-    <input type="hidden" id="b" value="{{ grade_scale.b_c }}">
-    <input type="hidden" id="c" value="{{ grade_scale.c_d }}">
-    <input type="hidden" id="d" value="{{ grade_scale.d_f }}">
+  <input type="hidden" id="a" value="{{ grade_scale.a_b }}">
+  <input type="hidden" id="b" value="{{ grade_scale.b_c }}">
+  <input type="hidden" id="c" value="{{ grade_scale.c_d }}">
+  <input type="hidden" id="d" value="{{ grade_scale.d_f }}">
 
-    <input type="hidden" id="secret-key" value="{{ secret_key }}">
-    <input type="hidden" id="class-id" value="{{ class_obj.id }}">
-    <div id="weights">
-        {% for i in range(1, 9) %}
-            {% if grade_factor['category' ~ i ~ '_name'] is not none %}
-                <input type="hidden" id="category_{{ i }}_weight" value="{{ grade_factor['category' ~ i ~ '_weight'] }}"> 
-            {% endif %}
-        {% endfor %}
-    </div>
-    <div id="drop">
-        {% for i in range(1, 9) %}
-            {% if grade_factor['category' ~ i ~ '_name'] is not none %}
-                <input type="hidden" id="category_{{ i }}_drop" value="{{ grade_factor['category' ~ i ~ '_drop'] }}"> 
-            {% endif %}
-        {% endfor %}
-    </div>
+  <input type="hidden" id="secret-key" value="{{ secret_key }}">
+  <input type="hidden" id="class-id" value="{{ class_obj.id }}">
+  <div id="weights">
+    {% for i in range(1, 9) %}
+      {% if grade_factor['category' ~ i ~ '_name'] is not none %}
+        <input type="hidden" id="category_{{ i }}_weight" value="{{ grade_factor['category' ~ i ~ '_weight'] }}"> 
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div id="drop">
+    {% for i in range(1, 9) %}
+      {% if grade_factor['category' ~ i ~ '_name'] is not none %}
+        <input type="hidden" id="category_{{ i }}_drop" value="{{ grade_factor['category' ~ i ~ '_drop'] }}"> 
+      {% endif %}
+    {% endfor %}
+  </div>
 
-    <!-- grade factor dropdown -->
-    <div id="category-selector" style="display: none;">
-        <select class="custom-select">
-            {% for i in range(1, 9) %}
-                {% if grade_factor['category' ~ i ~ '_name'] is not none %}
-                    <option value="{{ i }}">
-                        {{ grade_factor['category' ~ i ~ '_name'] }}
-                    </option>
-                {% endif %}
+  <!-- grade factor dropdown -->
+  <div id="category-selector" style="display: none;">
+    <select class="custom-select">
+      {% for i in range(1, 9) %}
+        {% if grade_factor['category' ~ i ~ '_name'] is not none %}
+          <option value="{{ i }}">
+            {{ grade_factor['category' ~ i ~ '_name'] }}
+          </option>
+        {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="grades">
+    <div class="inner">
+      <table class="table table-striped">
+        <thead>
+          <tr class="name-row">
+            <th class="first">&nbsp;</th>
+            <td class="total">Total</td>
+            {% for assignment in assignments %}
+              <td id="assignment_{{ assignment.id }}_name" class="assignment_{{ assignment.id }}">{{ assignment.assignment_name }}</td>
             {% endfor %}
-        </select>
+            <td>&nbsp;</td>
+            <td id="new_name" class="new"> </td>
+          </tr>
+          <tr class="button-row">
+            <th class="first"></th>
+            <td class="total"></td>
+            {% for assignment in assignments %}
+              <td class="assignment_{{ assignment.id }}"><button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button></td>
+            {% endfor %}
+            <td>&nbsp;</td>
+            <th id="add-new" class="new"><button class="btn btn-primary" onclick="newAssignment(this)"><i class="fas fa-plus-circle"></i></button></th>
+          </tr>
+          <tr class="date-row">
+            <th class="first">Date Due</th>
+            <td class="total"></td>
+            {% for assignment in assignments %}
+              <td id="assignment_{{ assignment.id }}_date" class="assignment_{{ assignment.id }}">{{ assignment.assignment_date }}</td>
+            {% endfor %}
+            <td>&nbsp;</td>
+            <td id="new_date" class="new"> </td>
+          </tr>
+          <tr class="category-row">
+            <th class="first">Category</th>
+            <td class="total"></td>
+            {% for assignment in assignments %}
+              <td id="assignment_{{ assignment.id }}_category" class="assignment_{{ assignment.id }}"><input type="hidden" id="assignment_{{ assignment.id }}_category_num" value="{{ assignment.assignment_type }}">{{ grade_factor['category' ~ assignment.assignment_type ~ '_name'] }}</td>
+            {% endfor %}
+            <td>&nbsp;</td>
+            <td id="new_category" class="new"> </td>
+          </tr>
+          <tr class="pts-row">
+            <th class="first">Pts Possible</th>
+            <td class="total"></td>
+            {% for assignment in assignments %}
+              <td id="assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}">{{ assignment.total_points }}</td>
+            {% endfor %}
+            <td>&nbsp;</td>
+            <td id="new_points" class="new"> </td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+          <tr class="num-row">
+            <th class="first">{{ student.first_name }} {{ student.last_name }}</th>
+            <td class="total"><span id="student_{{ student.id }}_letter"></span>&nbsp;<span id="student_{{ student.id }}_grade"></span></td>
+            {% for assignment in assignments %}
+              {% for assignment_result in assignment_results[student.id] if assignment_result.assignment_id == assignment.id%}
+                <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}">{{ assignment_result.points_earned }}</td>
+              {% else %}
+                <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}"></td>
+              {% endfor %} 
+            {% endfor %}
+            <td>&nbsp;</td>
+            <td id="student_{{ student.id }}_new_points" class="new">&nbsp;</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+  </div>
 
-    <div class="grades">
-        <div class="inner">
-            <table class="table table-striped">
-                <thead>
-                    <tr class="name-row">
-                        <th class="first">&nbsp;</th>
-                        <td class="total">Total</td>
-                        {% for assignment in assignments %}
-                            <td id="assignment_{{ assignment.id }}_name" class="assignment_{{ assignment.id }}">{{ assignment.assignment_name }}</td>
-                        {% endfor %}
-                        <td>&nbsp;</td>
-                        <td id="new_name" class="new"> </td>
-                    </tr>
-                    <tr class="button-row">
-                        <th class="first"></th>
-                        <td class="total"></td>
-                        {% for assignment in assignments %}
-                            <td class="assignment_{{ assignment.id }}"><button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button></td>
-                        {% endfor %}
-                        <td>&nbsp;</td>
-                        <th id="add-new" class="new"><button class="btn btn-primary" onclick="newAssignment(this)"><i class="fas fa-plus-circle"></i></button></th>
-                    </tr>
-                    <tr class="date-row">
-                        <th class="first">Date Due</th>
-                        <td class="total"></td>
-                        {% for assignment in assignments %}
-                            <td id="assignment_{{ assignment.id }}_date" class="assignment_{{ assignment.id }}">{{ assignment.assignment_date }}</td>
-                        {% endfor %}
-                        <td>&nbsp;</td>
-                        <td id="new_date" class="new"> </td>
-                    </tr>
-                    <tr class="category-row">
-                        <th class="first">Category</th>
-                        <td class="total"></td>
-                        {% for assignment in assignments %}
-                            <td id="assignment_{{ assignment.id }}_category" class="assignment_{{ assignment.id }}"><input type="hidden" id="assignment_{{ assignment.id }}_category_num" value="{{ assignment.assignment_type }}">{{ grade_factor['category' ~ assignment.assignment_type ~ '_name'] }}</td>
-                        {% endfor %}
-                        <td>&nbsp;</td>
-                        <td id="new_category" class="new"> </td>
-                    </tr>
-                    <tr class="pts-row">
-                        <th class="first">Pts Possible</th>
-                        <td class="total"></td>
-                        {% for assignment in assignments %}
-                            <td id="assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}">{{ assignment.total_points }}</td>
-                        {% endfor %}
-                        <td>&nbsp;</td>
-                        <td id="new_points" class="new"> </td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for student in students %}
-                    <tr class="num-row">
-                        <th class="first">{{ student.first_name }} {{ student.last_name }}</th>
-                        <td class="total"><span id="student_{{ student.id }}_letter"></span>&nbsp;<span id="student_{{ student.id }}_grade"></span></td>
-                        {% for assignment in assignments %}
-                            {% for assignment_result in assignment_results[student.id] if assignment_result.assignment_id == assignment.id%}
-                                <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}">{{ assignment_result.points_earned }}</td>
-                            {% else %}
-                                <td id="student_{{ student.id }}_assignment_{{ assignment.id }}_points" class="assignment_{{ assignment.id }}"></td>
-                            {% endfor %} 
-                        {% endfor %}
-                        <td>&nbsp;</td>
-                        <td id="student_{{ student.id }}_new_points" class="new">&nbsp;</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- CSRF Protection -->
-    <script type="text/javascript">
-        var csrf_token = "{{ csrf_token() }}";
-    
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
-                }
-            }
-        });
-    </script>
-    <script src="{{ url_for('static', filename='teacher_class_grades.js') }}"></script>
+  <!-- CSRF Protection -->
+  <script type="text/javascript">
+    var csrf_token = "{{ csrf_token() }}";
+  
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrf_token);
+        }
+      }
+    });
+  </script>
+  <script src="{{ url_for('static', filename='teacher_class_grades.js') }}"></script>
 {% endblock %}

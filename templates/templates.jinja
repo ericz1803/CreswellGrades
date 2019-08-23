@@ -1,73 +1,73 @@
 {# navbar with just the navbar-brand and logout #}
 
 {% set user_actions_collapse %}
-    <div class="nav-item dropdown d-md-none">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
-            <i class="fas fa-user"></i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-left">
-            <a class="dropdown-item" href="/about">About Me</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href='/logout'>Logout</a>
-        </div>
+  <div class="nav-item dropdown d-md-none">
+    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
+      <i class="fas fa-user"></i>
+    </a>
+    <div class="dropdown-menu dropdown-menu-left">
+      <a class="dropdown-item" href="/about">About Me</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href='/logout'>Logout</a>
     </div>
-    <div class="nav-item dropdown d-none d-md-block">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
-            <i class="fas fa-user"></i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="/about">About Me</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href='/logout'>Logout</a>
-        </div>
+  </div>
+  <div class="nav-item dropdown d-none d-md-block">
+    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
+      <i class="fas fa-user"></i>
+    </a>
+    <div class="dropdown-menu dropdown-menu-right">
+      <a class="dropdown-item" href="/about">About Me</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href='/logout'>Logout</a>
     </div>
+  </div>
 {% endset %}
 
 {% set user_actions %}
-    <div class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
-            <i class="fas fa-user"></i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="/about">About Me</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href='/logout'>Logout</a>
-        </div>
+  <div class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
+      <i class="fas fa-user"></i>
+    </a>
+    <div class="dropdown-menu dropdown-menu-right">
+      <a class="dropdown-item" href="/about">About Me</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href='/logout'>Logout</a>
     </div>
+  </div>
 {% endset %}
 
 {% set basicnav %}
-    <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="/"><h4>Creswell Grades</h4></a>
-        {{ user_actions }}
+  <nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="/"><h4>Creswell Grades</h4></a>
+    {{ user_actions }}
 
-    </nav>
+  </nav>
 {% endset %}
 
 {# navbar with just the navbar-brand #}
 
 {% set emptynav %}
-    <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="/"><h4>Creswell Grades</h4></a>
-    </nav>
+  <nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="/"><h4>Creswell Grades</h4></a>
+  </nav>
 {% endset %}
 
 {# 
-    left: left aligned in navbar, add <li>
-    right: right aligned in navbar, add <li>
+  left: left aligned in navbar, add <li>
+  right: right aligned in navbar, add <li>
 #}
 
 {% macro custom_navbar(left) %}
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="/"><h4>Creswell Grades</h4></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                {{ left }}
-            </ul>
-            {{ user_actions_collapse }}
-        </div>
-    </nav>
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <a class="navbar-brand" href="/"><h4>Creswell Grades</h4></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        {{ left }}
+      </ul>
+      {{ user_actions_collapse }}
+    </div>
+  </nav>
 {% endmacro %}
