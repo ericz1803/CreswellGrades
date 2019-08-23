@@ -41,11 +41,11 @@
           <tbody class="category_{{ k }}">
             {% for assignment, result in v %}
               <tr id="assignment_{{ assignment.id }}">
-                <td id="category_{{ k }}_assignment_{{ assignment.id }}_name">{{ assignment.assignment_name }}</td>
-                <td id="category_{{ k }}_assignment_{{ assignment.id }}_date">{{ assignment.assignment_date }}</td>
+                <td id="category_{{ k }}_assignment_{{ assignment.id }}_name" class="name">{{ assignment.assignment_name }}</td>
+                <td id="category_{{ k }}_assignment_{{ assignment.id }}_date" class="date">{{ assignment.assignment_date }}</td>
                 <td id="category_{{ k }}_assignment_{{ assignment.id }}_points" class="points">{% if result is defined %} {{ result.points_earned }} {% endif %}</td>
-                <td id="category_{{ k }}_assignment_{{ assignment.id }}_total_points">{{ assignment.total_points }}</td>
-                <td id="category_{{ k }}_assignment_{{ assignment.id }}_percentage">&nbsp;</td>
+                <td id="category_{{ k }}_assignment_{{ assignment.id }}_total_points" class="total">{{ assignment.total_points }}</td>
+                <td id="category_{{ k }}_assignment_{{ assignment.id }}_percentage" class="pct">&nbsp;</td>
               </tr>
             {% endfor %}
             <tr class="total">

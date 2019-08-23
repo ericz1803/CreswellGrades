@@ -12,14 +12,17 @@
   - Shows dropped grades
   - What if grades
 
+![](static/readme/teacher.gif)
+![](static/readme/student.gif)
+
 ## Install
  
 ### First Time Setup
-0. (optional) Set up [virtualenv](https://virtualenv.pypa.io/en/latest/userguide/) ([see below](#set-up-virtualenv)) 
-1. Install dependencies: `(sudo) pip install -r requirements.txt`
-2. Install postgres ([see below](#install-postgres))
-3. Create database ([see below](#create-postgres-database))
-4. Import database structure: `python manage.py db upgrade`
+1. (optional) Set up [virtualenv](https://virtualenv.pypa.io/en/latest/userguide/) ([see below](#set-up-virtualenv)) 
+2. Install dependencies: `(sudo) pip install -r requirements.txt`
+3. Install postgres ([see below](#install-postgres))
+4. Create database ([see below](#create-postgres-database))
+5. Import database structure: `python manage.py db upgrade`
 5. Basic db setup: `python set_up_db.py`
 6. Run app: `./develop.sh` (or [see below](#run-application))
 

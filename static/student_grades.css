@@ -2,6 +2,13 @@
     text-align: right;
 }
 
+.name {
+    width: 40%;
+}
+.date, .points, .total, .pct {
+    width: 15%;
+}
+
 .scrollable {
     overflow: auto;
     width: calc(100% - 10px);

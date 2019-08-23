@@ -230,9 +230,10 @@ function edit(e) {
                 element.innerHTML = `<input class="form-control input-sm" type="date" value="${element.innerHTML}">`;
                 break;
             case "category-row":
-                let contents = element.innerHTML;
+                let contents = element.innerText;
                 element.innerHTML = document.getElementById('category-selector').innerHTML;
                 for (let child of element.children[0].children) {
+                    console.log(child);
                     if (child.text == contents) {
                         child.selected = true;
                     }
