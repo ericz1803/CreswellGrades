@@ -7,6 +7,7 @@
 - Teacher gradebook
   - Up to 8 grade categories
   - Lowest grade dropping
+  - Dragscroll for smoother navigation
   - Graphs showing statistics for assignment grades and total grade
 - Student grade viewer
   - Breakdown by category

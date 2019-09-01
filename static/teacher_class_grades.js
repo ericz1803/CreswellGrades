@@ -263,7 +263,7 @@ function edit(e) {
 */
 function doneEdit(e) {
     let p = e.parentElement;
-    p.innerHTML = '<button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button>';
+    p.innerHTML = '<button class="btn btn-primary" onclick="showGraph(this)"><i class="far fa-chart-bar"></i></button> <button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button>';
     currently_editing = currently_editing.filter(x => x != p.className);
 
     //remove input fields and package data into json

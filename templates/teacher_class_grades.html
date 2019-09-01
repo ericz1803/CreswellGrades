@@ -77,7 +77,7 @@
   </div>
 
   <div class="grades">
-    <div class="inner">
+    <div class="inner dragscroll">
       <table class="table table-striped">
         <thead>
           <tr class="name-row">
@@ -160,5 +160,6 @@
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+  <script src="{{ url_for('static', filename='dragscroll/dragscroll.js') }}"></script>
   <script src="{{ url_for('static', filename='teacher_class_grades.js') }}"></script>
 {% endblock %}
