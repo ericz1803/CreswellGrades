@@ -1,18 +1,20 @@
 # [CreswellGrades](https://creswell-grades.herokuapp.com/)
 
-[![Build Status](https://travis-ci.com/ericz1803/CreswellGrades.svg?token=kgRjisW2saVwCyBzYyN5&branch=master)](https://travis-ci.com/ericz1803/CreswellGrades)
+[![Build Status](https://travis-ci.com/ericz1803/CreswellGrades.svg?token=kgRjisW2saVwCyBzYyN5&branch=master)](https://travis-ci.com/ericz1803/CreswellGrades) [![GitHub license](https://img.shields.io/github/license/ericz1803/CreswellGrades)](https://github.com/ericz1803/CreswellGrades/blob/master/LICENSE.md)
 
 ## Features
 
 - Teacher gradebook
   - Up to 8 grade categories
   - Lowest grade dropping
+  - Graphs showing statistics for assignment grades and total grade
 - Student grade viewer
   - Breakdown by category
   - Shows dropped grades
   - What if grades
 
 ![](static/readme/teacher.gif)
+![](static/readme/graphs.gif)
 ![](static/readme/student.gif)
 
 ## Install

@@ -167,7 +167,7 @@ function submitNewAssignment(e) {
                             new_element.id = "assignment_" + response["id"] + "_name";
                             break;
                         case "button-row":
-                            new_element.innerHTML = '<button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button>';
+                            new_element.innerHTML = '<button class="btn btn-primary" onclick="showGraph(this)"><i class="far fa-chart-bar"></i></button> <button class="btn btn-primary" onclick="edit(this)"><i class="far fa-edit"></i></button>';
                             break;
                         case "category-row":
                             new_element.innerHTML = `<input type="hidden" id="assignment_${response["id"]}_category_num" value="${values_json["category-name"]}"></input>` + values_json["category-name"];
@@ -441,3 +441,117 @@ function calculate_grades() {
         row.children[1].children[1].innerText = grade_total;
     }
 }
+
+function showGraph(e) {
+    let cName = e.parentElement.className;
+    let elem_title = document.getElementById("modalTitle");
+    let elem_text = document.getElementById("modalBodyText");
+    let stats = [];
+    //grade array
+    let grade = [0, 0, 0, 0, 0];
+    let labels = ['F', 'D', 'C', 'B', 'A'];
+
+    //separate process for total grade and normal assignments
+    //separate grades into bins based on grade letter earned
+    if (cName == "total") {
+        //set title
+        elem_title.innerText = "Total Grades";
+        //get values
+        for (grade_elem of document.getElementsByClassName("student_grade_totals")) {
+            stats.push(parseFloat(grade_elem.innerText));
+        }
+        //bin values
+        for (let val of stats) {
+            if (val >= a) {
+                grade[4] += 1;
+            } else if (val >= b) {
+                grade[3] += 1;
+            } else if (val >= c) {
+                grade[2] += 1;
+            } else if (val >= d) {
+                grade[1] += 1;
+            } else {
+                grade[0] += 1;
+            }
+        }
+        console.log(grade);
+        
+    } else {
+        //set title
+        elem_title.innerText = document.getElementById(cName + '_name').innerText + " Stats";
+        //get values
+        let elements = document.querySelectorAll("." + cName);
+        let total_points = parseFloat(document.getElementById(cName + '_points').innerText);
+        for (let element of elements) {
+            //select input type
+            if (element.parentElement.className == "num-row"){
+                if (element.innerText) {
+                    stats.push(parseFloat(element.innerText));
+                }
+            }
+        }
+        //bin values
+        for (let val of stats) {
+            let grade_num = val / total_points * 100;
+            console.log(val, total_points);
+            if (grade_num >= a) {
+                grade[4] += 1;
+            } else if (grade_num >= b) {
+                grade[3] += 1;
+            } else if (grade_num >= c) {
+                grade[2] += 1;
+            } else if (grade_num >= d) {
+                grade[1] += 1;
+            } else {
+                grade[0] += 1;
+            }
+        }
+    }
+    let ctx = document.getElementById('graph').getContext('2d');
+    let myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+
+            labels: labels,
+            datasets: [{
+                data: grade,
+                backgroundColor: [
+                    'rgba(231, 24, 55, 0.2)',
+                    'rgba(255, 123, 0, 0.2)',
+                    'rgba(252, 233, 3, 0.2)',
+                    'rgba(165, 214, 16, 0.2)',
+                    'rgba(20, 134, 41, 0.2)'
+                ]
+            }]
+        },
+        options: {
+            legend: {
+                display: false
+            },
+            title: {
+                display: true,
+                text: "Total Grades"
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+    $('#gradesModal').modal({
+        show: true
+    });
+}
+
+//reset canvas on close
+$('#gradesModal').on('hidden.bs.modal', function () {
+    console.log("closed");
+    document.getElementById("modalBodyText").innerText = "";
+    let div1 = document.getElementById("graphWrapper");
+    div1.innerHTML = "&nbsp;";
+    div1.innerHTML = '<canvas id="graph" width=100% height=100%></canvas>';
+});
