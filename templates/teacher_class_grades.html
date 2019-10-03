@@ -28,6 +28,7 @@
 
   <input type="hidden" id="secret-key" value="{{ secret_key }}">
   <input type="hidden" id="class-id" value="{{ class_obj.id }}">
+  <input type="hidden" id="points-based" value="{{ grade_factor['points_based'] }}">
   <div id="weights">
     {% for i in range(1, 9) %}
       {% if grade_factor['category' ~ i ~ '_name'] is not none %}

@@ -5,6 +5,9 @@ var drop = {};
 //grade scale
 var a, b, c, d;
 
+var points_based = (document.getElementById("points-based").value.toLowerCase() == 'true');
+console.log(points_based);
+
 document.onload = get_grade();
 document.onload = calculate_grades();
 
@@ -94,15 +97,27 @@ function calculate_grades() {
     //calculate total
     let total_weight = 0;
     let grade_total = 0;
+    let total_earned = 0;
 
     for (let k of Object.keys(earned)) {
-        if (total[k] > 0) {
-            grade_total += earned[k] / total[k] * weights[k];
-            total_weight += weights[k];
+        if (points_based) {
+            grade_total += total[k];
+            total_earned += earned[k];
         }
+        else {
+            if (total[k] > 0) {
+                grade_total += earned[k] / total[k] * weights[k];
+                total_weight += weights[k];
+            }
+        }
+        
     }
-
-    grade_total = (grade_total / total_weight * 100).toFixed(2);
+    if (points_based) {
+        console.log(total_earned, grade_total);
+        grade_total = (total_earned / grade_total * 100).toFixed(2);
+    } else {
+        grade_total = (grade_total / total_weight * 100).toFixed(2);
+    }
 
     console.log(grade_total);
     document.getElementById("grade-pct").innerText = grade_total;

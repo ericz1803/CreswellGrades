@@ -51,7 +51,7 @@ class GradeFactor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     
     category1_name = db.Column(db.String(63), nullable=False)
-    category1_weight = db.Column(db.Float(), nullable=False)
+    category1_weight = db.Column(db.Float())
     category1_drop = db.Column(db.Integer(), default=0)
     category2_name = db.Column(db.String(63))
     category2_weight = db.Column(db.Float())
@@ -74,6 +74,8 @@ class GradeFactor(db.Model):
     category8_name = db.Column(db.String(63))
     category8_weight = db.Column(db.Float())
     category8_drop = db.Column(db.Integer(), default=0)
+    #points based option
+    points_based = db.Column(db.Boolean, default=False)
 
     class_id = db.Column(db.Integer, db.ForeignKey('class.id', ondelete='CASCADE'))
 

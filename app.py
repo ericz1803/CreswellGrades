@@ -337,6 +337,10 @@ def create_class():
         c = request.form['c']
         d = request.form['d']
 
+        points_based = False
+        if request.form.get("points_based"):
+            points_based = True
+
         cat1name = request.form['category_name1']
         cat1val = request.form['category_value1']
         cat1drop = request.form.get('category_drop1')
@@ -361,6 +365,7 @@ def create_class():
         cat8name = request.form.get('category_name8')
         cat8val = request.form.get('category_value8')
         cat8drop = request.form.get('category_drop8')
+
 
         new_class = models.Class(teacher_id=user_id, name=class_name, join_code=join_code)
         new_grade_factor = models.GradeFactor(
@@ -388,6 +393,7 @@ def create_class():
             category8_name = cat8name,
             category8_weight = cat8val,
             category8_drop = cat8drop,
+            points_based = points_based,
             class_id=new_class.id,
             class_=new_class
         )
@@ -432,7 +438,7 @@ def teacher_class_about(id):
         grade_scale.c_d = request.form['c']
         grade_scale.d_f = request.form['d']
         
-        #update grade factor
+        #update grade factor 
         grade_factor = models.GradeFactor.query.filter_by(class_id=id).first_or_404()
         grade_factor.category1_name = request.form['category_name1']
         grade_factor.category1_weight = request.form['category_value1']
@@ -458,6 +464,13 @@ def teacher_class_about(id):
         grade_factor.category8_name = request.form.get('category_name8')
         grade_factor.category8_weight = request.form.get('category_value8')
         grade_factor.category8_drop = request.form.get('category_drop8')
+        if request.form.get("points_based"):
+            grade_factor.points_based = True
+        else:
+            grade_factor.points_based = False
+
+       
+
         db.session.commit()
         db.session.close()
 

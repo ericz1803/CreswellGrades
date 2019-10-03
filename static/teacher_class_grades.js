@@ -4,6 +4,8 @@ var weights = {};
 var drop = {};
 var a, b, c, d;
 
+var points_based = (document.getElementById("points-based").value.toLowerCase() == 'true');
+console.log(points_based);
 document.onload = get_values();
 document.onload = calculate_grades();
 
@@ -405,6 +407,7 @@ function calculate_grades() {
         //calculate total
         let total_weight = 0;
         let grade_total = 0;
+        let total_earned = 0;
 
         for (let i = 1; i <= 8; i++) {
             //drop from category i
@@ -413,15 +416,26 @@ function calculate_grades() {
                 total[i] -= val[2];
             }
 
-            //if category total is not 0, then add category to grade total
-            if (total[i] > Number.EPSILON) {
-                grade_total += earned[i] / total[i] * weights[i];
-                total_weight += weights[i];
+            if (points_based) {
+                grade_total += total[i];
+                total_earned += earned[i];
             }
+            else {
+                //if category total is not 0, then add category to grade total
+                if (total[i] > Number.EPSILON) {
+                    grade_total += earned[i] / total[i] * weights[i];
+                    total_weight += weights[i];
+                }
+            }
+            
         }
 
-
-        grade_total = (grade_total / total_weight * 100).toFixed(2);
+        if (points_based) {
+            console.log(total_earned, grade_total);
+            grade_total = (total_earned / grade_total * 100).toFixed(2);
+        } else {
+            grade_total = (grade_total / total_weight * 100).toFixed(2);
+        }
         
         //set grade letter
         let grade_letter_element = row.children[1].children[0];

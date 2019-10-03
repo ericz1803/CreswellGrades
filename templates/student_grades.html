@@ -15,9 +15,19 @@
   <input type="hidden" id="b" value="{{ grade_scale.b_c }}">
   <input type="hidden" id="c" value="{{ grade_scale.c_d }}">
   <input type="hidden" id="d" value="{{ grade_scale.d_f }}">
+  <input type="hidden" id="points-based" value="{{ grade_factor['points_based'] }}">
   <div class="grades">
     <div class="row">
-      <div class="col-8"><h1>{{ class_obj.name }} Grade</h1></div>
+      <div class="col-8">
+        <h1>
+          {{ class_obj.name }} Grade
+        </h1>
+        <h2>
+          {% if grade_factor['points_based'] %}
+            (points-based)
+          {% endif %}
+        </h2>
+      </div>
       <div class="col-4 text-right"><h1><span id="grade-letter"></span>  <span id="grade-pct"></span></h1></div>
     </div>
     <br>
